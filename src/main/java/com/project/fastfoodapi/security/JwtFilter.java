@@ -28,9 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
     final Gson gson;
     String[] urls=new String[]{
             "/api/auth/**",
-             "/api/operation/input/**",
-             "/api/operation/output/**",
-             "/api/operation/check"
+            "/api/assets/**"
     };
 
     @SneakyThrows

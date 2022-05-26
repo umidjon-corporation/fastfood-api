@@ -1,3 +1,7 @@
+GET http://localhost:8080/api/assets/image-not-found.png
+Accept: */*
+
+###
 GET http://localhost:8080/api/employee/1
 Accept: application/json
 
