@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -68,5 +69,10 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(ApiResponse.builder()
                 .message("File size must be less than " + maxFileSize)
                 .build());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public HttpEntity<?> accessDenied(AccessDeniedException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 }

@@ -12,6 +12,7 @@ import com.project.fastfoodapi.service.HumanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class EmployeeController {
     final HumanService humanService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()==UserType.CLIENT) {

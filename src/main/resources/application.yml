@@ -2,13 +2,10 @@ server:
   port: 8080
 spring:
   datasource:
-    username: rseofpdpsnjdtt
-#    username: postgres
-#    password: 911368169umid
-    password: 4c20682f24092f443178ac6d3af2071836521776816515a34cfd3123c64fda6e
+    username: postgres
+    password: 911368169umid
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/fastfood_api
-    url: postgres://rseofpdpsnjdtt:4c20682f24092f443178ac6d3af2071836521776816515a34cfd3123c64fda6e@ec2-176-34-211-0.eu-west-1.compute.amazonaws.com:5432/d1jbfc1iroeis9
+    url: jdbc:postgresql://localhost:5432/fastfood_api
   jpa:
     hibernate:
       ddl-auto: create
@@ -22,7 +19,21 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-  application:
-    name: ADMIN
+  profiles:
+    active: prod
 debug: true
-
+app:
+  auth:
+    apikey:
+      key: 9c65d6e78bc8540c511dbbfcdcd270fb
+    secret: 9c65d6e78bc8540c511dbbfcdcd270fb
+    token:
+      type: Bearer
+      cookieName: token
+    header:
+      key: Authorization
+logging:
+  level:
+    org:
+      springframework:
+        boot: INFO

@@ -24,7 +24,7 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
         if(initMode.equalsIgnoreCase("always")){
             humanRepository.save(Human.builder()
-                            .userType(UserType.ADMIN)
+                            .userType(UserType.CLIENT)
                             .birthdate(LocalDate.parse("1991-01-23"))
                             .lang(Language.UZBEK)
                             .name("Tojiboyev Umidjon")
