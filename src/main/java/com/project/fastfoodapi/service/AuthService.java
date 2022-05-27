@@ -104,6 +104,7 @@ public class AuthService implements UserDetailsService {
                     .message("Token not found")
                     .build();
         }
+        authorization=authorization.replaceFirst("Bearer ", "");
         return checkJwt(authorization);
     }
 

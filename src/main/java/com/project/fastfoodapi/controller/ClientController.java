@@ -2,6 +2,7 @@ package com.project.fastfoodapi.controller;
 
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.HumanDto;
+import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.ClientStatus;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -81,5 +83,14 @@ public class ClientController {
                 .contentType(MediaType.valueOf(photo.getType()))
                 .contentLength(photo.getSize())
                 .body(photo.getBytes());
+    }
+
+    @GetMapping("/me")
+    public HttpEntity<?> getMe(@AuthenticationPrincipal Human human){
+        return ResponseEntity.ok().body(ApiResponse.<HumanFrontDto>builder()
+                .message("Success!")
+                .success(true)
+                .data(humanMapper.humanToHumanFrontDto(human))
+                .build());
     }
 }
