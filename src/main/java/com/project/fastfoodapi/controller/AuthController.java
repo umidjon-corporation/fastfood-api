@@ -5,16 +5,13 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.LoginDto;
 import com.project.fastfoodapi.model.AuthTokenModel;
 import com.project.fastfoodapi.service.AuthService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
@@ -25,8 +22,8 @@ public class AuthController {
     final PropertySource propertySource;
 
     @PostMapping("/token/get")
-    public HttpEntity<AuthTokenModel> getJWTToken(@RequestBody LoginDto dto) {
-        return ResponseEntity.ok(authService.validateApiKeyAndGetJwtToken(dto));
+    public HttpEntity<AuthTokenModel> getJWTToken(@RequestBody LoginDto dto, HttpServletResponse res) {
+        return ResponseEntity.ok(authService.getJwtToken(dto, res));
     }
 
     @GetMapping("/token/check")

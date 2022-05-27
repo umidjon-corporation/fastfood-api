@@ -9,11 +9,8 @@ import com.project.fastfoodapi.model.AuthTokenModel;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.utils.JWTHelper;
 import com.project.fastfoodapi.utils.TokenClaims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.file.AccessDeniedException;
 import java.security.Key;
@@ -42,10 +40,14 @@ public class AuthService implements UserDetailsService {
         return new SecretKeySpec(apiKeySecretBytes, JWTHelper.SIGNATURE_ALGORITHM.getJcaName());
     }
 
-    public AuthTokenModel validateApiKeyAndGetJwtToken(LoginDto dto) {
+    public AuthTokenModel getJwtToken(LoginDto dto, HttpServletResponse res) {
         Map<String, Object> claims = getUserInfo(dto);
-
         String jwt = JWTHelper.creatJWT(claims, "Auth service", propertySource.getAppAuthSecret());
+        Cookie cookie=new Cookie(propertySource.getCookieName(), jwt);
+        cookie.setMaxAge(7200);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        res.addCookie(cookie);
         return getTokenModel(jwt);
     }
 
