@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     configuration.setAllowedHeaders(List.of("*"));
                     return configuration;
                 }).and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/assets/**").permitAll()
