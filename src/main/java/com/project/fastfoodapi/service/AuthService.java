@@ -57,7 +57,7 @@ public class AuthService implements UserDetailsService {
         Optional<Human> optionalHuman = humanRepository.findByNumber(dto.getLogin());
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.ADMIN
                 || !passwordEncoder.matches(dto.getPassword(), optionalHuman.get().getPassword())) {
-            throw new AccessDeniedException("Access denied!");
+            throw new AccessDeniedException("Username or password not valid");
         }
         claims.put(TokenClaims.USER_ID.getKey(), optionalHuman.get().getId());
         claims.put(TokenClaims.USER_NAME.getKey(), optionalHuman.get().getName());
