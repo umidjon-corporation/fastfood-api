@@ -4,6 +4,7 @@ import com.project.fastfoodapi.config.PropertySource;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.LoginDto;
 import com.project.fastfoodapi.entity.Human;
+import com.project.fastfoodapi.entity.enums.ClientStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.model.AuthTokenModel;
 import com.project.fastfoodapi.repository.HumanRepository;
@@ -78,10 +79,18 @@ public class AuthService implements UserDetailsService {
                     .build();
         }
 
+        Map<String, Object> claims = JWTHelper.getClaims(getSecretKey(), token);
+        Long id = (Long) claims.get(TokenClaims.USER_ID.getKey());
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        if(optionalHuman.isEmpty() || !optionalHuman.get().getNumber().equals(claims.get(TokenClaims.USER_NUMBER.getKey()))){
+            return ApiResponse.<Map<String, Object>>builder()
+                    .message("Token not valid")
+                    .build();
+        }
         return ApiResponse.<Map<String, Object>>builder()
                 .success(true)
                 .message("Token passed!")
-                .data(JWTHelper.getClaims(getSecretKey(), token))
+                .data(claims)
                 .build();
     }
 
