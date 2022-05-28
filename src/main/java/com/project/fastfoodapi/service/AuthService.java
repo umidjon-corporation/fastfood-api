@@ -80,7 +80,7 @@ public class AuthService implements UserDetailsService {
         }
 
         Map<String, Object> claims = JWTHelper.getClaims(getSecretKey(), token);
-        Long id = (Long) claims.get(TokenClaims.USER_ID.getKey());
+        Long id = Long.parseLong(claims.get(TokenClaims.USER_ID.getKey()).toString());
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
         if(optionalHuman.isEmpty() || !optionalHuman.get().getNumber().equals(claims.get(TokenClaims.USER_NUMBER.getKey()))){
             return ApiResponse.<Map<String, Object>>builder()
