@@ -74,7 +74,7 @@ public class CourierController {
     }
 
     @PutMapping("/{id}/photo")
-    public HttpEntity<?> getPhoto(@PathVariable Long id, MultipartHttpServletRequest req){
+    public HttpEntity<?> changePhoto(@PathVariable Long id, MultipartHttpServletRequest req){
         ApiResponse<HumanFrontDto> apiResponse = courierService.changePhoto(id, req.getFile("photo"));
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }

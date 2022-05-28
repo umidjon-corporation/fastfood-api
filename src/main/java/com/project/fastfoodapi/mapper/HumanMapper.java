@@ -46,6 +46,6 @@ public interface HumanMapper {
                     .build());
             return;
         }
-        humanFrontDto.getPhoto().setUrl("/api/client/"+human.getId()+"/photo");
+        humanFrontDto.getPhoto().setUrl("/api/assets/human/"+human.getId()+"/photo");
     }
 }

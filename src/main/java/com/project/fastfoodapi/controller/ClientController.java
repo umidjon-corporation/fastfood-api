@@ -73,22 +73,6 @@ public class ClientController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @GetMapping("/{id}/photo")
-    public HttpEntity<?> getPhoto(@PathVariable Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (optionalHuman.get().getPhoto() == null) {
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/api/assets/image-not-found.png")).build();
-        }
-        Attachment photo = optionalHuman.get().getPhoto();
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(photo.getType()))
-                .contentLength(photo.getSize())
-                .body(photo.getBytes());
-    }
-
     @GetMapping("/me")
     public HttpEntity<?> getMe(@AuthenticationPrincipal Human human){
         return ResponseEntity.ok().body(ApiResponse.<HumanFrontDto>builder()
