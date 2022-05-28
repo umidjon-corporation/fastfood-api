@@ -14,6 +14,7 @@ import com.project.fastfoodapi.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ public class OrderController {
     final OrderService orderService;
     final FilialRepository filialRepository;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public HttpEntity<?> getAll(@RequestParam(required = false, defaultValue = "") String status, @RequestParam(required = false) Long filial, @RequestParam(required = false) Boolean delivery) {
         return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery));

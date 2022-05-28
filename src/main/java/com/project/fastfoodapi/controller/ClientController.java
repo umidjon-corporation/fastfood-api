@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class ClientController {
     final HumanRepository humanRepository;
     final ClientService clientService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public HttpEntity<?> getAll() {
         return ResponseEntity.ok().body(
@@ -38,6 +40,7 @@ public class ClientController {
         );
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
@@ -63,6 +66,7 @@ public class ClientController {
 
 //    TODO client delete kerakmi?
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
         ApiResponse<Object> apiResponse = clientService.block(id);

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -31,6 +32,7 @@ public class CourierController {
     final OrderMapper orderMapper;
     final CourierService courierService;
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
     @GetMapping("/{number}")
     public HttpEntity<?> getSelf(@PathVariable String number){
         Optional<Human> optionalHuman = humanRepository.findByNumber(number);
@@ -40,6 +42,7 @@ public class CourierController {
         return ResponseEntity.ok().body(humanMapper.humanToHumanFrontDto(optionalHuman.get()));
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
     @GetMapping("/{id}/orders")
     public HttpEntity<?> getOrders(
             @PathVariable Long id,
@@ -76,6 +79,7 @@ public class CourierController {
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
     @PutMapping("/{id}")
     public HttpEntity<?> editData(@PathVariable Long id, @RequestBody CourierEditDto dto){
         ApiResponse<HumanFrontDto> apiResponse= courierService.edit(id, dto);

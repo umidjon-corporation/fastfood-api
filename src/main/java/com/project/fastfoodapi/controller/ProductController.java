@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,18 +44,20 @@ public class ProductController {
         return ResponseEntity.ok().body(productMapper.toFrontDto(optionalProduct.get()));
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public HttpEntity<?> add(@ModelAttribute ProductDto dto){
         ApiResponse<ProductFrontDto> apiResponse = productService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@ModelAttribute ProductDto dto, @PathVariable Long id){
         ApiResponse<ProductFrontDto> apiResponse = productService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id){
         ApiResponse<Object> apiResponse = productService.delete(id);

@@ -9,6 +9,7 @@ import com.project.fastfoodapi.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,18 +46,21 @@ public class CategoryController {
         return ResponseEntity.ok().body(optionalCategory.get());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public HttpEntity<?> add(@RequestBody CategoryDto dto){
         ApiResponse<Category> apiResponse = categoryService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@RequestBody CategoryDto dto, @PathVariable Long id){
         ApiResponse<Category> apiResponse = categoryService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id){
         ApiResponse<Object> apiResponse = categoryService.delete(id);

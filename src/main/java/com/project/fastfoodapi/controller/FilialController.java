@@ -8,6 +8,7 @@ import com.project.fastfoodapi.service.FilialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class FilialController {
         return ResponseEntity.ok().body(optionalFilial.get());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public HttpEntity<?> add(@RequestBody FilialDto dto){
         ApiResponse<?> apiResponse = filialService.add(dto);
@@ -39,12 +41,14 @@ public class FilialController {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@RequestBody FilialDto dto, @PathVariable Long id){
         ApiResponse<?> apiResponse = filialService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id){
         ApiResponse<?> apiResponse = filialService.delete(id);
