@@ -8,11 +8,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/fastfood_api
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
   sql:
     init:
-      mode: ALWAYS
+      mode: NEVER
   mvc:
     servlet:
       path: /api
