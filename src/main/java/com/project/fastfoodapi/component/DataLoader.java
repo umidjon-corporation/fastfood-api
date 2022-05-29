@@ -1,6 +1,7 @@
 package com.project.fastfoodapi.component;
 
 import com.project.fastfoodapi.entity.Human;
+import com.project.fastfoodapi.entity.enums.ClientStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +24,8 @@ public class DataLoader implements CommandLineRunner {
     final HumanRepository humanRepository;
     @Override
     public void run(String... args) {
-        if(initMode.equalsIgnoreCase("always")){
+        List<Human> humans = humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, ClientStatus.DELETED);
+        if(initMode.equalsIgnoreCase("always") || humans.isEmpty()){
             humanRepository.save(Human.builder()
                             .userType(UserType.ADMIN)
                             .birthdate(LocalDate.parse("1991-01-23"))
