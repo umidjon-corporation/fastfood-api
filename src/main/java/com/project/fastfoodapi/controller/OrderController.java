@@ -34,7 +34,7 @@ public class OrderController {
     public HttpEntity<?> getAll(@RequestParam(required = false, defaultValue = "") String status,
                                 @RequestParam(required = false) Long filial,
                                 @RequestParam(required = false) Boolean delivery,
-                                @RequestParam(required = false, defaultValue = "1") Integer page,
+                                @RequestParam(required = false, defaultValue = "0") Integer page,
                                 @RequestParam(required = false, defaultValue = "20") Integer size,
                                 @RequestParam(required = false) boolean desc
     ) {

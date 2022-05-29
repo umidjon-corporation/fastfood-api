@@ -164,7 +164,7 @@ public class OrderService {
         OrderStatus orderStatus = null;
         Pageable pageable = PageRequest.of(page, size);
         if(desc){
-            pageable=PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "time"));
+            pageable=PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "time", "id"));
         }
 
         try {
