@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderFrontDto implements Serializable {
+    private final Long id;
     private final LocalDateTime time;
     private final List<OrderProductFrontDto> products;
     private final HumanFrontDto operator, client;
