@@ -17,7 +17,9 @@ import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -156,11 +158,15 @@ public class OrderService {
                 .build();
     }
 
-    public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page) {
+    public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page ,boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
         Pageable pageable = Pageable.ofSize(size);
         pageable.withPage(page);
+        Sort sort=Sort.by(Sort.Direction.ASC, "time");
+        if(desc){
+            sort=Sort.by(Sort.Direction.DESC, "time");
+        }
         try {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ignore) {}
@@ -169,22 +175,22 @@ public class OrderService {
         }
         if (delivery == null) {
             if (filial == null) {
-                all = orderRepository.findByOrderStatus(orderStatus, pageable);
+                all = orderRepository.findByOrderStatus(orderStatus, pageable, sort);
             } else {
-                all = orderRepository.findByOrderStatusAndFilial_Id(orderStatus, filial, pageable);
+                all = orderRepository.findByOrderStatusAndFilial_Id(orderStatus, filial, pageable, sort);
             }
         } else {
             if (delivery) {
                 if (filial == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable);
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable, sort);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(orderStatus, filial, pageable);
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(orderStatus, filial, pageable, sort);
                 }
             } else {
                 if (filial == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable);
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable, sort);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(orderStatus, filial, pageable);
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(orderStatus, filial, pageable, sort);
                 }
             }
 

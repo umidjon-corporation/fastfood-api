@@ -35,9 +35,10 @@ public class OrderController {
                                 @RequestParam(required = false) Long filial,
                                 @RequestParam(required = false) Boolean delivery,
                                 @RequestParam(required = false, defaultValue = "1") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size
+                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false) boolean desc
     ) {
-        return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery, size, page));
+        return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery, size, page, desc));
     }
 
 
