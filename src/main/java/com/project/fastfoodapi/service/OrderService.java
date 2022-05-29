@@ -18,6 +18,7 @@ import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.boot.model.source.spi.Sortable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -161,10 +162,9 @@ public class OrderService {
     public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page ,boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
-        Pageable pageable = Pageable.ofSize(size);
-        pageable.withPage(page);
+        Pageable pageable = PageRequest.of(page, size);
         if(desc){
-            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "time"));
+            pageable=PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "time"));
         }
 
         try {
