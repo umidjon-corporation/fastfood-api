@@ -163,10 +163,10 @@ public class OrderService {
         OrderStatus orderStatus = null;
         Pageable pageable = Pageable.ofSize(size);
         pageable.withPage(page);
-        Sort sort=Sort.by(Sort.Direction.ASC, "time");
         if(desc){
-            sort=Sort.by(Sort.Direction.DESC, "time");
+            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "time"));
         }
+
         try {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ignore) {}
@@ -175,22 +175,22 @@ public class OrderService {
         }
         if (delivery == null) {
             if (filial == null) {
-                all = orderRepository.findByOrderStatus(orderStatus, pageable, sort);
+                all = orderRepository.findByOrderStatus(orderStatus, pageable);
             } else {
-                all = orderRepository.findByOrderStatusAndFilial_Id(orderStatus, filial, pageable, sort);
+                all = orderRepository.findByOrderStatusAndFilial_Id(orderStatus, filial, pageable);
             }
         } else {
             if (delivery) {
                 if (filial == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable, sort);
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(orderStatus, filial, pageable, sort);
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(orderStatus, filial, pageable);
                 }
             } else {
                 if (filial == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable, sort);
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(orderStatus, filial, pageable, sort);
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(orderStatus, filial, pageable);
                 }
             }
 
