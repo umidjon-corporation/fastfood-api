@@ -66,7 +66,7 @@ public class OrderService {
         //TODO calc delivery price
         order.getDelivery().setPrice(BigDecimal.ZERO);
         Order save = orderRepository.save(order);
-        //TODO choose operator & send notification to operator
+        //TODO choose operator
         return ApiResponse.<OrderFrontDto>builder()
                 .data(orderMapper.orderToOrderFrontDto(save))
                 .success(true)
@@ -98,7 +98,8 @@ public class OrderService {
                     .build();
         }
         Optional<Human> optionalHuman = humanRepository.findById(operatorId);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.OPERATOR) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.OPERATOR
+                || optionalHuman.get().getUserType()!=UserType.ADMIN) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Operator with id=(" + operatorId + ") not found")
                     .build();
