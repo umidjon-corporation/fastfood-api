@@ -20,7 +20,7 @@ public class JWTHelper {
         final Long userId = (Long) claims.get(TokenClaims.USER_ID.getKey());
         long timeMillis = System.currentTimeMillis();
         Date issued = new Date(timeMillis);
-        Date expire = new Date(timeMillis+7200000);
+        Date expire = new Date(timeMillis+(7200*1000));
         
         final byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
         final Key signingKey = new SecretKeySpec(apiKeySecretBytes, SIGNATURE_ALGORITHM.getJcaName());

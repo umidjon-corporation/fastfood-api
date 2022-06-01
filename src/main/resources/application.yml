@@ -30,5 +30,6 @@ app:
     token:
       type: Bearer
       cookieName: token
+      expire: 7200
     header:
       key: Authorization

@@ -15,11 +15,6 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalField;
 import java.util.Map;
 
 @Component
@@ -39,9 +34,8 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
                 return false;
             }
             attributes.put("user", apiResponse.getData());
-            long expire = (long) apiResponse.getData().get(TokenClaims.EXPIRE.getKey());
-            long l = expire - (new Date().getTime());
-            session.setMaxInactiveInterval((int)l);
+            Integer expire = (Integer) apiResponse.getData().get(TokenClaims.EXPIRE.getKey());
+//            int l = expire - (int) (System.currentTimeMillis());
         }
         return true;
     }

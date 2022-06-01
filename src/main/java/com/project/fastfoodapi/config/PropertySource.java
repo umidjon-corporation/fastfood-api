@@ -20,6 +20,9 @@ public class PropertySource {
     @Value("${app.auth.secret}")
     private String appAuthSecret;
 
+    @Value("${app.auth.token.expire}")
+    private int expire;
+
 //    @Value("${app.auth.ttl}")
 //    private long appTimeToLive;
 

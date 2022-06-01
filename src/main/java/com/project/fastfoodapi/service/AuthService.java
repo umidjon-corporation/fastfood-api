@@ -45,7 +45,7 @@ public class AuthService implements UserDetailsService {
         Map<String, Object> claims = getUserInfo(dto);
         String jwt = JWTHelper.creatJWT(claims, "Auth service", propertySource.getAppAuthSecret());
         Cookie cookie=new Cookie(propertySource.getCookieName(), jwt);
-        cookie.setMaxAge(7200);
+        cookie.setMaxAge(propertySource.getExpire());
         cookie.setPath("/");
         cookie.setSecure(true);
         res.addCookie(cookie);
