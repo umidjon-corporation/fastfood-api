@@ -6,6 +6,7 @@ import com.project.fastfoodapi.entity.enums.Region;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Human implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +46,7 @@ public class Human implements UserDetails {
     private ClientStatus status=ClientStatus.ACTIVE;
 
     @Column(nullable = false)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;
 
     @Enumerated(EnumType.STRING)

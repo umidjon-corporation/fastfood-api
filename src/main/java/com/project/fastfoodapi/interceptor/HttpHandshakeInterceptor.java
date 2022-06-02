@@ -29,15 +29,9 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest servletRequest) {
             HttpSession session = servletRequest.getServletRequest().getSession();
             attributes.put("sessionId", session.getId());
-            ApiResponse<Map<String, Object>> apiResponse = authService.checkJwt(servletRequest.getServletRequest());
-            if(!apiResponse.isSuccess()){
-                return false;
-            }
-            attributes.put("user", apiResponse.getData());
-            Integer expire = (Integer) apiResponse.getData().get(TokenClaims.EXPIRE.getKey());
-//            int l = expire - (int) (System.currentTimeMillis());
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

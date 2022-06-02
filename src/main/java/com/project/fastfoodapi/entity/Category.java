@@ -1,5 +1,6 @@
 package com.project.fastfoodapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,5 +26,6 @@ public class Category {
 
     @Builder.Default
     @Column(nullable = false)
+    @JsonIgnore
     private boolean active=true;
 }
