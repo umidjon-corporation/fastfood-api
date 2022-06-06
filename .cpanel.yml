@@ -1,4 +1,0 @@
-deployment:
-  task:
-    - export DEPLOYPATH=/
-    - /bin/cp -R src $DEPLOYPATH
