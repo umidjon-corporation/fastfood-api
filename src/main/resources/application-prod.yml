@@ -3,6 +3,3 @@ spring:
     username: rseofpdpsnjdtt
     password: 4c20682f24092f443178ac6d3af2071836521776816515a34cfd3123c64fda6e
     url: postgres://rseofpdpsnjdtt:4c20682f24092f443178ac6d3af2071836521776816515a34cfd3123c64fda6e@ec2-176-34-211-0.eu-west-1.compute.amazonaws.com:5432/d1jbfc1iroeis9
-  jpa:
-    hibernate:
-      ddl-auto: create
