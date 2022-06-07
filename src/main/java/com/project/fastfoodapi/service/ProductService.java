@@ -22,13 +22,13 @@ public class ProductService {
     final CategoryRepository categoryRepository;
 
 
-    public ApiResponse<ProductFrontDto> add(ProductDto dto){
-        if(dto.getPhoto().isEmpty()){
+    public ApiResponse<ProductFrontDto> add(ProductDto dto) {
+        if (dto.getPhoto().isEmpty()) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo shouldn't be empty")
                     .build();
         }
-        if(!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")){
+        if (!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo type must be png, jpeg, ico, jpg")
                     .build();
@@ -44,20 +44,20 @@ public class ProductService {
                 .build();
     }
 
-    public ApiResponse<ProductFrontDto> edit(Long id, ProductDto dto){
+    public ApiResponse<ProductFrontDto> edit(Long id, ProductDto dto) {
         Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
-        if(optionalProduct.isEmpty()){
+        if (optionalProduct.isEmpty()) {
             return ApiResponse.<ProductFrontDto>builder()
-                    .message("Product with id=(" + id+") not found")
+                    .message("Product with id=(" + id + ") not found")
                     .build();
         }
         Product product = optionalProduct.get();
-        if(dto.getPhoto().isEmpty()){
+        if (dto.getPhoto().isEmpty()) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo shouldn't be empty")
                     .build();
         }
-        if(!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")){
+        if (!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo type must be png, jpeg, ico, jpg")
                     .build();
@@ -72,9 +72,9 @@ public class ProductService {
     }
 
 
-    public ApiResponse<Object> delete(Long id){
+    public ApiResponse<Object> delete(Long id) {
         Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
-        if(optionalProduct.isEmpty()){
+        if (optionalProduct.isEmpty()) {
             return ApiResponse.builder()
                     .message("Product with id=(" + id + ") not found")
                     .build();

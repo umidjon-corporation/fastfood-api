@@ -3,7 +3,6 @@ package com.project.fastfoodapi.controller;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
-import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.ClientStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -12,14 +11,11 @@ import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -44,7 +40,7 @@ public class ClientController {
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()!=UserType.CLIENT) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ResponseEntity.badRequest().body(ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")
                     .build());
@@ -74,7 +70,7 @@ public class ClientController {
     }
 
     @GetMapping("/me")
-    public HttpEntity<?> getMe(@AuthenticationPrincipal Human human){
+    public HttpEntity<?> getMe(@AuthenticationPrincipal Human human) {
         return ResponseEntity.ok().body(ApiResponse.<HumanFrontDto>builder()
                 .message("Success!")
                 .success(true)

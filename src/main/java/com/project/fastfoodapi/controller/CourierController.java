@@ -34,9 +34,9 @@ public class CourierController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
     @GetMapping("/{number}")
-    public HttpEntity<?> getSelf(@PathVariable String number){
+    public HttpEntity<?> getSelf(@PathVariable String number) {
         Optional<Human> optionalHuman = humanRepository.findByNumber(number);
-        if(optionalHuman.isEmpty()){
+        if (optionalHuman.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(humanMapper.humanToHumanFrontDto(optionalHuman.get()));
@@ -48,21 +48,21 @@ public class CourierController {
             @PathVariable Long id,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
-    ){
+    ) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if(optionalHuman.isEmpty()){
+        if (optionalHuman.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        if(from==null && to==null){
+        if (from == null && to == null) {
             return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(orderRepository.findByDelivery_Courier_Id(id)));
-        }else if(from!=null && to!=null){
+        } else if (from != null && to != null) {
             return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(
                     orderRepository.findByDelivery_Courier_IdAndTimeIsBetween(id,
                             LocalDateTime.of(from, LocalTime.parse("00:00")),
                             LocalDateTime.of(to, LocalTime.parse("23:59")))
             ));
         }
-        if(from!=null){
+        if (from != null) {
             return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(
                     orderRepository.findByDelivery_Courier_IdAndTimeIsBetween(id,
                             LocalDateTime.of(from, LocalTime.parse("00:00")), LocalDateTime.now())
@@ -74,16 +74,16 @@ public class CourierController {
     }
 
     @PutMapping("/{id}/photo")
-    public HttpEntity<?> changePhoto(@PathVariable Long id, MultipartHttpServletRequest req){
+    public HttpEntity<?> changePhoto(@PathVariable Long id, MultipartHttpServletRequest req) {
         ApiResponse<HumanFrontDto> apiResponse = courierService.changePhoto(id, req.getFile("photo"));
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
     @PutMapping("/{id}")
-    public HttpEntity<?> editData(@PathVariable Long id, @RequestBody CourierEditDto dto){
-        ApiResponse<HumanFrontDto> apiResponse= courierService.edit(id, dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+    public HttpEntity<?> editData(@PathVariable Long id, @RequestBody CourierEditDto dto) {
+        ApiResponse<HumanFrontDto> apiResponse = courierService.edit(id, dto);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
 }

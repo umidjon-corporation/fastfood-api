@@ -22,17 +22,17 @@ public class Filial {
     //intended - mo'ljal
     @Column(nullable = false)
     private String nameUz, nameRu, intended;
+
     @Column(columnDefinition = "text")
     private String address;
+
     @Column(nullable = false, columnDefinition = "time")
     private LocalTime start, finish;
+
     @Column(nullable = false)
-    // latitude - kenglik
-    // longitude - uzunlik
-    // xarita koordinatalari
     private Float latitude, longitude;
 
     @Builder.Default
     @Column(nullable = false)
-    private boolean active=true;
+    private boolean active = true;
 }

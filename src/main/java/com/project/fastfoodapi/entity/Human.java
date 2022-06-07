@@ -1,22 +1,18 @@
 package com.project.fastfoodapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.fastfoodapi.entity.enums.ClientStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import com.project.fastfoodapi.entity.enums.UserType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -43,7 +39,7 @@ public class Human implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private ClientStatus status=ClientStatus.ACTIVE;
+    private ClientStatus status = ClientStatus.ACTIVE;
 
     @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -91,6 +87,6 @@ public class Human implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.status==ClientStatus.ACTIVE;
+        return this.status == ClientStatus.ACTIVE;
     }
 }

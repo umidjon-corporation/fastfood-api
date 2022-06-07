@@ -25,7 +25,7 @@ public class Order {
 
     @Column(nullable = false)
     @Builder.Default
-    private LocalDateTime time=LocalDateTime.now();
+    private LocalDateTime time = LocalDateTime.now();
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn
@@ -47,7 +47,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private OrderStatus orderStatus=OrderStatus.NEW;
+    private OrderStatus orderStatus = OrderStatus.NEW;
 
     @ManyToOne
     @JoinColumn(nullable = false)

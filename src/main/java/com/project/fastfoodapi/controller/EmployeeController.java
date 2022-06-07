@@ -2,7 +2,6 @@ package com.project.fastfoodapi.controller;
 
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
-import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.ClientStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -29,7 +28,7 @@ public class EmployeeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()==UserType.CLIENT) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() == UserType.CLIENT) {
             return ResponseEntity.badRequest().body(ApiResponse.builder()
                     .message("Employee with id=(" + id + ") not found")
                     .build());

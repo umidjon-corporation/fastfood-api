@@ -1,9 +1,7 @@
 package com.project.fastfoodapi.interceptor;
 
-import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.service.AuthService;
-import com.project.fastfoodapi.utils.TokenClaims;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(HttpHandshakeInterceptor.class);
     final AuthService authService;
     final HumanRepository humanRepository;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         logger.info("Before handshake");

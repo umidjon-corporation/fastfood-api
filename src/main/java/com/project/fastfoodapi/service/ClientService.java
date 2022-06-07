@@ -36,7 +36,7 @@ public class ClientService {
 
     public ApiResponse<HumanFrontDto> edit(Long id, HumanDto dto) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()!=UserType.CLIENT) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();
@@ -56,7 +56,7 @@ public class ClientService {
 
     public ApiResponse<?> delete(Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()!=UserType.CLIENT) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();
@@ -71,7 +71,7 @@ public class ClientService {
 
     public ApiResponse<Object> block(Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType()!=UserType.CLIENT) {
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();

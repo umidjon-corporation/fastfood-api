@@ -20,8 +20,8 @@ public class JWTHelper {
         final Long userId = (Long) claims.get(TokenClaims.USER_ID.getKey());
         long timeMillis = System.currentTimeMillis();
         Date issued = new Date(timeMillis);
-        Date expire = new Date(timeMillis+(7200*1000));
-        
+        Date expire = new Date(timeMillis + (7200 * 1000));
+
         final byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
         final Key signingKey = new SecretKeySpec(apiKeySecretBytes, SIGNATURE_ALGORITHM.getJcaName());
 
@@ -31,11 +31,11 @@ public class JWTHelper {
         return builder.compact();
     }
 
-    public static void checkJwt(Key secretKey, String token){
+    public static void checkJwt(Key secretKey, String token) {
         Jwts.parser().setSigningKey(secretKey).parse(token);
     }
 
-    public static Map<String, Object> getClaims(Key secretKey, String token){
+    public static Map<String, Object> getClaims(Key secretKey, String token) {
         Jws<Claims> jws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
         return jws.getBody();
     }

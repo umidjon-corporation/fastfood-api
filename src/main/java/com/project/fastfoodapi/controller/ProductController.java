@@ -7,7 +7,6 @@ import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.mapper.ProductMapper;
 import com.project.fastfoodapi.repository.OrderProductRepository;
-import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
 import com.project.fastfoodapi.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +30,14 @@ public class ProductController {
 
 
     @GetMapping
-    public HttpEntity<?> getAll(){
+    public HttpEntity<?> getAll() {
         return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findByActiveTrue()));
     }
 
     @GetMapping("/{id}")
-    public HttpEntity<?> getOne(@PathVariable Long id){
+    public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
-        if(optionalProduct.isEmpty()){
+        if (optionalProduct.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(productMapper.toFrontDto(optionalProduct.get()));
@@ -46,28 +45,29 @@ public class ProductController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public HttpEntity<?> add(@ModelAttribute ProductDto dto){
+    public HttpEntity<?> add(@ModelAttribute ProductDto dto) {
         ApiResponse<ProductFrontDto> apiResponse = productService.add(dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    public HttpEntity<?> edit(@ModelAttribute ProductDto dto, @PathVariable Long id){
+    public HttpEntity<?> edit(@ModelAttribute ProductDto dto, @PathVariable Long id) {
         ApiResponse<ProductFrontDto> apiResponse = productService.edit(id, dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public HttpEntity<?> delete(@PathVariable Long id){
+    public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<Object> apiResponse = productService.delete(id);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @GetMapping("/{id}/photo")
-    public HttpEntity<?> getPhoto(@PathVariable Long id){
+    public HttpEntity<?> getPhoto(@PathVariable Long id) {
         Optional<Product> optionalProduct = productRepository.findByIdAndActiveTrue(id);
-        if(optionalProduct.isEmpty()){
+        if (optionalProduct.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Attachment photo = optionalProduct.get().getPhoto();
@@ -79,7 +79,7 @@ public class ProductController {
     }
 
     @GetMapping("/top")
-    public HttpEntity<?> getTopProducts(@RequestParam Integer limit){
+    public HttpEntity<?> getTopProducts(@RequestParam Integer limit) {
         List<Long> products = orderProductRepository.findTopProducts(limit);
         List<Product> productList = productRepository.findAllById(products);
         return ResponseEntity.ok().body(productMapper.toFrontDto(productList));

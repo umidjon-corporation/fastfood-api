@@ -14,6 +14,7 @@ public interface ProductMapper {
 
     @Mapping(source = "photo.id", target = "photo.url", qualifiedByName = "url")
     ProductFrontDto toFrontDto(Product product);
+
     List<ProductFrontDto> toFrontDto(List<Product> products);
 
     @Mapping(source = "categoryId", target = "category.id")
@@ -21,7 +22,7 @@ public interface ProductMapper {
     void updateProductFromProductDto(ProductDto productDto, @MappingTarget Product product);
 
     @Named("url")
-    default String urlGenerate(Long id){
-        return "/api/product/"+id+"/photo";
+    default String urlGenerate(Long id) {
+        return "/api/product/" + id + "/photo";
     }
 }

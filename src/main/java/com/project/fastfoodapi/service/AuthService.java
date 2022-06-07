@@ -36,7 +36,7 @@ public class AuthService implements UserDetailsService {
     final HumanRepository humanRepository;
     final PasswordEncoder passwordEncoder;
 
-    public Key getSecretKey(){
+    public Key getSecretKey() {
         final byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(propertySource.getAppAuthSecret());
         return new SecretKeySpec(apiKeySecretBytes, JWTHelper.SIGNATURE_ALGORITHM.getJcaName());
     }
@@ -44,7 +44,7 @@ public class AuthService implements UserDetailsService {
     public AuthTokenModel getJwtToken(LoginDto dto, HttpServletResponse res) {
         Map<String, Object> claims = getUserInfo(dto);
         String jwt = JWTHelper.creatJWT(claims, "Auth service", propertySource.getAppAuthSecret());
-        Cookie cookie=new Cookie(propertySource.getCookieName(), jwt);
+        Cookie cookie = new Cookie(propertySource.getCookieName(), jwt);
         cookie.setMaxAge(propertySource.getExpire());
         cookie.setPath("/");
         cookie.setSecure(true);
@@ -73,7 +73,7 @@ public class AuthService implements UserDetailsService {
     public ApiResponse<Map<String, Object>> checkJwt(String token) {
         try {
             JWTHelper.checkJwt(getSecretKey(), token);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ApiResponse.<Map<String, Object>>builder()
                     .message(e.getMessage())
                     .build();
@@ -82,7 +82,7 @@ public class AuthService implements UserDetailsService {
         Map<String, Object> claims = JWTHelper.getClaims(getSecretKey(), token);
         Long id = Long.parseLong(claims.get(TokenClaims.USER_ID.getKey()).toString());
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
-        if(optionalHuman.isEmpty() || !optionalHuman.get().getNumber().equals(claims.get(TokenClaims.USER_NUMBER.getKey()))){
+        if (optionalHuman.isEmpty() || !optionalHuman.get().getNumber().equals(claims.get(TokenClaims.USER_NUMBER.getKey()))) {
             return ApiResponse.<Map<String, Object>>builder()
                     .message("Token not valid")
                     .build();
@@ -95,17 +95,17 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    public ApiResponse<Map<String, Object>> checkJwt(HttpServletRequest request){
+    public ApiResponse<Map<String, Object>> checkJwt(HttpServletRequest request) {
         String authorization = request.getHeader(propertySource.getAppAuthHeaderKey());
-        if(authorization==null){
+        if (authorization == null) {
             Cookie[] cookies = request.getCookies();
-            if(cookies==null){
+            if (cookies == null) {
                 return ApiResponse.<Map<String, Object>>builder()
                         .message("Token not found")
                         .build();
             }
             for (Cookie cookie : cookies) {
-                if(cookie!=null && cookie.getName().equals(propertySource.getCookieName())){
+                if (cookie != null && cookie.getName().equals(propertySource.getCookieName())) {
                     return checkJwt(cookie.getValue());
                 }
             }
@@ -113,7 +113,7 @@ public class AuthService implements UserDetailsService {
                     .message("Token not found")
                     .build();
         }
-        authorization=authorization.replaceFirst("Bearer ", "");
+        authorization = authorization.replaceFirst("Bearer ", "");
         return checkJwt(authorization);
     }
 

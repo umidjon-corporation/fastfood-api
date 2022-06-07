@@ -3,9 +3,7 @@ package com.project.fastfoodapi.security;
 import com.google.gson.Gson;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.service.AuthService;
-import com.project.fastfoodapi.utils.JWTHelper;
 import com.project.fastfoodapi.utils.TokenClaims;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,10 +34,10 @@ public class JwtFilter extends OncePerRequestFilter {
             if (tokenClaims.isSuccess()) {
                 UserDetails userDetails = authService.loadUserByUsername((String)
                         tokenClaims.getData().get(TokenClaims.USER_NUMBER.getKey()));
-                if(userDetails==null){
+                if (userDetails == null) {
                     throw new AccessDeniedException("User not found");
                 }
-                UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, userDetails.getPassword(), userDetails.getAuthorities()
                 );
                 authenticationToken.setDetails(
@@ -47,14 +45,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             filterChain.doFilter(req, res);
-            if(res.getStatus()==401){
+            if (res.getStatus() == 401) {
                 res.getWriter().write(gson.toJson(tokenClaims));
             }
-        }
-        catch (AccessDeniedException | NestedServletException e){
+        } catch (AccessDeniedException | NestedServletException e) {
             filterChain.doFilter(req, res);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             res.setStatus(500);
         }

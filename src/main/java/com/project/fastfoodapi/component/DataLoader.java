@@ -18,22 +18,23 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
-    @Value("${spring.sql.init.mode:never}")
-    private String initMode;
     final PasswordEncoder passwordEncoder;
     final HumanRepository humanRepository;
+    @Value("${spring.sql.init.mode:never}")
+    private String initMode;
+
     @Override
     public void run(String... args) {
         List<Human> humans = humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, ClientStatus.DELETED);
-        if(initMode.equalsIgnoreCase("always") || humans.isEmpty()){
+        if (initMode.equalsIgnoreCase("always") || humans.isEmpty()) {
             humanRepository.save(Human.builder()
-                            .userType(UserType.ADMIN)
-                            .birthdate(LocalDate.parse("1991-01-23"))
-                            .lang(Language.UZBEK)
-                            .name("Tojiboyev Umidjon")
-                            .number("+998990472436")
-                            .region(Region.TASHKENT)
-                            .password(passwordEncoder.encode("1234"))
+                    .userType(UserType.ADMIN)
+                    .birthdate(LocalDate.parse("1991-01-23"))
+                    .lang(Language.UZBEK)
+                    .name("Tojiboyev Umidjon")
+                    .number("+998990472436")
+                    .region(Region.TASHKENT)
+                    .password(passwordEncoder.encode("1234"))
                     .build());
         }
     }

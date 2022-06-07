@@ -23,15 +23,15 @@ public class CategoryController {
     final CategoryRepository categoryRepository;
 
     @GetMapping
-    public HttpEntity<?> getAll(){
+    public HttpEntity<?> getAll() {
         return ResponseEntity.ok().body(categoryRepository.findByActiveIsTrue());
     }
 
     @GetMapping("/{id}")
     public HttpEntity<?> getOneCategory(@PathVariable Long id,
-                                        @RequestParam(required = false, defaultValue = "false") boolean children){
+                                        @RequestParam(required = false, defaultValue = "false") boolean children) {
         Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(id);
-        if(optionalCategory.isEmpty()){
+        if (optionalCategory.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         if (children) {
@@ -48,41 +48,41 @@ public class CategoryController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public HttpEntity<?> add(@RequestBody CategoryDto dto){
+    public HttpEntity<?> add(@RequestBody CategoryDto dto) {
         ApiResponse<Category> apiResponse = categoryService.add(dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    public HttpEntity<?> edit(@RequestBody CategoryDto dto, @PathVariable Long id){
+    public HttpEntity<?> edit(@RequestBody CategoryDto dto, @PathVariable Long id) {
         ApiResponse<Category> apiResponse = categoryService.edit(id, dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public HttpEntity<?> delete(@PathVariable Long id){
+    public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<Object> apiResponse = categoryService.delete(id);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @GetMapping("/parent")
-    public HttpEntity<?> getAllCategoryParent(){
+    public HttpEntity<?> getAllCategoryParent() {
         List<Category> categories = categoryRepository.findByParentNullAndActiveTrue();
         return ResponseEntity.ok().body(categories);
     }
 
     @GetMapping("/{id}/child")
-    public HttpEntity<?> getCategoryChild(@PathVariable Long id){
+    public HttpEntity<?> getCategoryChild(@PathVariable Long id) {
         List<Category> categories = categoryRepository.findByParent_IdAndActiveTrue(id);
         return ResponseEntity.ok().body(categories);
     }
 
     @GetMapping("/{id}/children")
-    public HttpEntity<?> getCategoryChildren(@PathVariable Long id){
+    public HttpEntity<?> getCategoryChildren(@PathVariable Long id) {
         Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(id);
-        if(optionalCategory.isEmpty()){
+        if (optionalCategory.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         List<CategoryChildrenDto> result = categoryService.getChildren(id);

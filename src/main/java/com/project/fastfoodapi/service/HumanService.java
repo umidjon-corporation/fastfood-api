@@ -2,7 +2,6 @@ package com.project.fastfoodapi.service;
 
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
-import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.ClientStatus;

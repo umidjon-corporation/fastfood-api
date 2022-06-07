@@ -72,9 +72,9 @@ public class GlobalException {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public HttpEntity<?> accessDenied(AccessDeniedException ex){
+    public HttpEntity<?> accessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.builder()
-                        .message(ex.getMessage())
+                .message(ex.getMessage())
                 .build());
     }
 }

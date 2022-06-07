@@ -8,9 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class PropertySource {
 
-//    @Value("${spring.application.name}")
-//    private String appName;
-
     @Value("${app.auth.apikey.key}")
     private String appAuthApiKey;
 
@@ -22,9 +19,6 @@ public class PropertySource {
 
     @Value("${app.auth.token.expire}")
     private int expire;
-
-//    @Value("${app.auth.ttl}")
-//    private long appTimeToLive;
 
     @Value("${app.auth.header.key}")
     private String appAuthHeaderKey;

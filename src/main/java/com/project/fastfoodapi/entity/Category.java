@@ -27,5 +27,5 @@ public class Category {
     @Builder.Default
     @Column(nullable = false)
     @JsonIgnore
-    private boolean active=true;
+    private boolean active = true;
 }

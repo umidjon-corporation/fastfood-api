@@ -27,8 +27,8 @@ public class AuthController {
     }
 
     @GetMapping("/token/check")
-    public HttpEntity<?> checkJwtToken(HttpServletRequest request){
+    public HttpEntity<?> checkJwtToken(HttpServletRequest request) {
         ApiResponse<Map<String, Object>> apiResponse = authService.checkJwt(request);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 }

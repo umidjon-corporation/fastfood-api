@@ -17,7 +17,6 @@ import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -57,7 +56,7 @@ public class OrderService {
             orderProduct.setPrice(optionalProduct.get().getPrice());
             all += price.doubleValue();
         }
-        order.getProducts().removeIf(orderProduct -> orderProduct.getAmount()==null);
+        order.getProducts().removeIf(orderProduct -> orderProduct.getAmount() == null);
         order.setAmount(BigDecimal.valueOf(all));
         Optional<Human> optionalClient = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, dto.getClientId());
         optionalClient.ifPresent(order::setClient);
@@ -99,7 +98,7 @@ public class OrderService {
         }
         Optional<Human> optionalHuman = humanRepository.findById(operatorId);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.OPERATOR
-                || optionalHuman.get().getUserType()!=UserType.ADMIN) {
+                || optionalHuman.get().getUserType() != UserType.ADMIN) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Operator with id=(" + operatorId + ") not found")
                     .build();
@@ -160,17 +159,18 @@ public class OrderService {
                 .build();
     }
 
-    public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page ,boolean desc) {
+    public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
         Pageable pageable = PageRequest.of(page, size);
-        if(desc){
-            pageable=PageRequest.of(page, size,Sort.by(Sort.Direction.DESC, "time", "id"));
+        if (desc) {
+            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time", "id"));
         }
 
         try {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException ignore) {}
+        } catch (IllegalArgumentException ignore) {
+        }
         if (orderStatus == null && filial == null && delivery == null) {
             return orderMapper.orderToOrderFrontDto(orderRepository.findAll());
         }

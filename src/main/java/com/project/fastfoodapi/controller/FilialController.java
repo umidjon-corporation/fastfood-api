@@ -21,13 +21,14 @@ public class FilialController {
     final FilialRepository filialRepository;
 
     @GetMapping
-    public HttpEntity<?> getAll(){
+    public HttpEntity<?> getAll() {
         return ResponseEntity.ok().body(filialRepository.findByActiveTrue());
     }
+
     @GetMapping("/{id}")
-    public HttpEntity<?> getOne(@PathVariable Long id){
+    public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Filial> optionalFilial = filialRepository.findByIdAndActiveTrue(id);
-        if(optionalFilial.isEmpty()){
+        if (optionalFilial.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(optionalFilial.get());
@@ -35,23 +36,23 @@ public class FilialController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public HttpEntity<?> add(@RequestBody FilialDto dto){
+    public HttpEntity<?> add(@RequestBody FilialDto dto) {
         ApiResponse<?> apiResponse = filialService.add(dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    public HttpEntity<?> edit(@RequestBody FilialDto dto, @PathVariable Long id){
+    public HttpEntity<?> edit(@RequestBody FilialDto dto, @PathVariable Long id) {
         ApiResponse<?> apiResponse = filialService.edit(id, dto);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public HttpEntity<?> delete(@PathVariable Long id){
+    public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<?> apiResponse = filialService.delete(id);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 }

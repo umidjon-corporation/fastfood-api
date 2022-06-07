@@ -23,7 +23,7 @@ public class HomeController {
     final HumanRepository humanRepository;
 
     @GetMapping("/assets/human/{id}/photo")
-    public HttpEntity<?> getPhoto(@PathVariable Long id){
+    public HttpEntity<?> getPhoto(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
             return ResponseEntity.notFound().build();

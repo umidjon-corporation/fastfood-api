@@ -1,8 +1,8 @@
 package com.project.fastfoodapi.mapper;
 
 import com.project.fastfoodapi.dto.OrderDto;
-import com.project.fastfoodapi.dto.front.OrderFrontDto;
 import com.project.fastfoodapi.dto.OrderProductDto;
+import com.project.fastfoodapi.dto.front.OrderFrontDto;
 import com.project.fastfoodapi.dto.front.OrderProductFrontDto;
 import com.project.fastfoodapi.entity.Order;
 import com.project.fastfoodapi.entity.OrderProduct;
@@ -16,6 +16,7 @@ import java.util.List;
 public interface OrderMapper {
     @Mapping(source = "productId", target = "product.id")
     OrderProduct orderProductDtoToOrderProduct(OrderProductDto dto);
+
     OrderProductFrontDto orderProductToOrderProductFrontDto(OrderProduct orderProduct);
 
     @Mapping(source = "filialId", target = "filial.id")
@@ -31,5 +32,6 @@ public interface OrderMapper {
 
 
     OrderFrontDto orderToOrderFrontDto(Order order);
+
     List<OrderFrontDto> orderToOrderFrontDto(List<Order> order);
 }
