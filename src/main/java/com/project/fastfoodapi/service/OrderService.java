@@ -1,5 +1,7 @@
 package com.project.fastfoodapi.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.OrderDto;
 import com.project.fastfoodapi.dto.front.DeliveryFrontDto;
@@ -23,6 +25,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,13 +167,7 @@ public class OrderService {
     public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
-        Pageable pageable;
-        if (desc) {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time", "id"));
-        }else{
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "time", "id"));
-        }
-
+        Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
         try {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ignore) {
@@ -200,5 +199,49 @@ public class OrderService {
         }
 
         return orderMapper.orderToOrderFrontDto(all);
+    }
+
+    public List<OrderFrontDto> getAllToday(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
+        List<Order> all;
+        OrderStatus orderStatus = null;
+        Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
+        LocalDateTime from=LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime to=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        try {
+            orderStatus = OrderStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException ignore) {
+        }
+        if (orderStatus == null && filial == null && delivery == null) {
+            return orderMapper.orderToOrderFrontDto(orderRepository.findByTimeIsBetween(from ,to, pageable));
+        }
+        if (delivery == null) {
+            if (filial == null) {
+                all = orderRepository.findByOrderStatusAndTimeIsBetween(orderStatus, from, to, pageable);
+            } else {
+                all = orderRepository.findByOrderStatusAndFilial_IdAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+            }
+        } else {
+            if (delivery) {
+                if (filial == null) {
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNullAndTimeIsBetween(orderStatus, from, to, pageable);
+                } else {
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+                }
+            } else {
+                if (filial == null) {
+                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNullAndTimeIsBetween(orderStatus, from, to, pageable);
+                } else {
+                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+                }
+            }
+
+        }
+        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(all);
+        return orderMapper.orderToOrderFrontDto(all);
+    }
+
+    public Pageable getPageable(int page, int size, Sort.Direction sort, String... properties){
+        return PageRequest.of(page, size, Sort.by(sort, properties));
     }
 }

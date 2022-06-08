@@ -9,19 +9,33 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByTimeIsBetween(LocalDateTime from, LocalDateTime to, Pageable pageable);
+
     List<Order> findByDelivery_Courier_IdAndTimeIsBetween(Long id, LocalDateTime timeStart, LocalDateTime timeEnd);
 
     List<Order> findByOrderStatus(OrderStatus orderStatus, Pageable pageable);
 
+    List<Order> findByOrderStatusAndTimeIsBetween(OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
+
     List<Order> findByOrderStatusAndDelivery_Courier_idIsNull(OrderStatus orderStatus, Pageable pageable);
+
+    List<Order> findByOrderStatusAndDelivery_Courier_idIsNullAndTimeIsBetween(OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByOrderStatusAndFilial_Id(OrderStatus orderStatus, Long filial_id, Pageable pageable);
 
+    List<Order> findByOrderStatusAndFilial_IdAndTimeIsBetween(OrderStatus orderStatus, Long filial_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
+
     List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(OrderStatus orderStatus, Long filial_id, Pageable pageable);
+
+    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(OrderStatus orderStatus, Long filial_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByOrderStatusAndDelivery_Courier_idIsNotNull(OrderStatus orderStatus, Pageable pageable);
 
+    List<Order> findByOrderStatusAndDelivery_Courier_idIsNotNullAndTimeIsBetween(OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
+
     List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(OrderStatus orderStatus, Long filial, Pageable pageable);
+
+    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(OrderStatus orderStatus, Long filial, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByDelivery_Courier_Id(Long courier_id);
 }

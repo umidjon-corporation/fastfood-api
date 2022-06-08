@@ -29,7 +29,7 @@ public class OrderController {
     final OrderService orderService;
     final FilialRepository filialRepository;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR')")
     @GetMapping
     public HttpEntity<?> getAll(@RequestParam(required = false, defaultValue = "") String status,
                                 @RequestParam(required = false) Long filial,
@@ -41,7 +41,16 @@ public class OrderController {
         return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery, size, page, desc));
     }
 
-
+    @GetMapping("/today")
+    public HttpEntity<?> getToday(@RequestParam(required = false, defaultValue = "") String status,
+                                @RequestParam(required = false) Long filial,
+                                @RequestParam(required = false) Boolean delivery,
+                                @RequestParam(required = false, defaultValue = "0") Integer page,
+                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false) boolean desc
+    ) {
+        return ResponseEntity.ok().body(orderService.getAllToday(status, filial, delivery, size, page, desc));
+    }
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
