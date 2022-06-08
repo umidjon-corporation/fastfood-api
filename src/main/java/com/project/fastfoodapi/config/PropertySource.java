@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class PropertySource {
 
+    @Value("${app.name}")
+    private String appName;
+
     @Value("${app.auth.apikey.key}")
     private String appAuthApiKey;
 

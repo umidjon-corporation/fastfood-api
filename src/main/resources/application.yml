@@ -23,6 +23,7 @@ spring:
     active: prod
 debug: true
 app:
+  name: fastfood-uz server
   auth:
     apikey:
       key: 9c65d6e78bc8540c511dbbfcdcd270fb

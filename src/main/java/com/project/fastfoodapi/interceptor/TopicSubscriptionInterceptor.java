@@ -1,7 +1,6 @@
 package com.project.fastfoodapi.interceptor;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.project.fastfoodapi.config.PropertySource;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.service.AuthService;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.AccessDeniedException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -27,45 +25,35 @@ import java.util.Map;
 public class TopicSubscriptionInterceptor implements ChannelInterceptor {
     final AuthService authService;
     final PropertySource propertySource;
+    final Gson gson;
 
     @SneakyThrows
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        Map<String, Object> headers = new LinkedHashMap<>();
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        MessageHeaders messageHeaders = accessor.getMessageHeaders();
+        for (String s : messageHeaders.keySet()) {
+            headers.put(s, messageHeaders.get(s));
+        }
         if (accessor.getSessionAttributes() != null && accessor.getCommand() != null) {
-//            Gson gson=new GsonBuilder().setPrettyPrinting().create();
-            Gson gson = new Gson();
-            switch (accessor.getCommand()) {
-                case SUBSCRIBE -> {
-                    return message;
-                }
-                case CONNECT -> {
-                    try {
-                        Map<String, List<Object>> nativeHeaders = gson.fromJson(gson.toJson(message.getHeaders().get("nativeHeaders")),
-                                new TypeToken<Map<String, List<Object>>>() {
-                                }.getType());
-                        String token = (String) nativeHeaders.get(propertySource.getAppAuthHeaderKey()).get(0);
-                        ApiResponse<Map<String, Object>> apiResponse =
-                                authService.checkJwt(token);
-                        if (!apiResponse.isSuccess()) {
-                            throw new AccessDeniedException(apiResponse.getMessage());
-                        }
-                        accessor.getSessionAttributes().put("user", apiResponse.getData());
-                    } catch (Exception e) {
-                        MessageHeaders messageHeaders = accessor.getMessageHeaders();
-                        Map<String, Object> headers = new LinkedHashMap<>();
-                        for (String s : messageHeaders.keySet()) {
-                            headers.put(s, messageHeaders.get(s));
-                        }
-                        headers.put("simpMessageType", SimpMessageType.DISCONNECT);
-                        headers.replace("stompCommand", StompCommand.DISCONNECT);
-                        return MessageBuilder.createMessage("Access denied", new MessageHeaders(headers));
+            if (accessor.getCommand() == StompCommand.CONNECT) {
+                try {
+                    String token = accessor.getFirstNativeHeader(propertySource.getAppAuthHeaderKey());
+                    ApiResponse<Map<String, Object>> apiResponse = authService.checkJwt(token);
+                    if (!apiResponse.isSuccess()) {
+                        throw new AccessDeniedException(apiResponse.getMessage());
                     }
-
+                    accessor.getSessionAttributes().put("user", apiResponse.getData());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    headers.put("simpMessageType", SimpMessageType.DISCONNECT);
+                    headers.replace("stompCommand", StompCommand.DISCONNECT);
+                    return MessageBuilder.createMessage("Access denied", new MessageHeaders(headers));
                 }
             }
-
         }
-        return message;
+        System.err.println(message.getHeaders());
+        return MessageBuilder.createMessage(message.getPayload(), new MessageHeaders(headers));
     }
 }

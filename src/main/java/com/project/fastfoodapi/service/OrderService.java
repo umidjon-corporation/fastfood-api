@@ -162,9 +162,11 @@ public class OrderService {
     public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable;
         if (desc) {
             pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "time", "id"));
+        }else{
+            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "time", "id"));
         }
 
         try {
@@ -172,7 +174,7 @@ public class OrderService {
         } catch (IllegalArgumentException ignore) {
         }
         if (orderStatus == null && filial == null && delivery == null) {
-            return orderMapper.orderToOrderFrontDto(orderRepository.findAll());
+            return orderMapper.orderToOrderFrontDto(orderRepository.findAll(pageable).getContent());
         }
         if (delivery == null) {
             if (filial == null) {

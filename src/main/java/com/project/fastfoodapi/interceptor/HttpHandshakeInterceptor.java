@@ -1,8 +1,7 @@
 package com.project.fastfoodapi.interceptor;
 
-import com.project.fastfoodapi.repository.HumanRepository;
-import com.project.fastfoodapi.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
@@ -19,8 +18,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(HttpHandshakeInterceptor.class);
-    final AuthService authService;
-    final HumanRepository humanRepository;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
@@ -32,6 +29,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
         return true;
     }
 
+    @SneakyThrows
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
         logger.info("After handshake");

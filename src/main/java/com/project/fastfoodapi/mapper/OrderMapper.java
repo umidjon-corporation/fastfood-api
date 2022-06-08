@@ -8,6 +8,7 @@ import com.project.fastfoodapi.entity.Order;
 import com.project.fastfoodapi.entity.OrderProduct;
 import org.mapstruct.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {
@@ -33,5 +34,5 @@ public interface OrderMapper {
 
     OrderFrontDto orderToOrderFrontDto(Order order);
 
-    List<OrderFrontDto> orderToOrderFrontDto(List<Order> order);
+    List<OrderFrontDto> orderToOrderFrontDto(Collection<Order> order);
 }
