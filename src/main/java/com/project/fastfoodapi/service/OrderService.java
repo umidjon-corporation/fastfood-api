@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.OrderDto;
 import com.project.fastfoodapi.dto.front.DeliveryFrontDto;
+import com.project.fastfoodapi.dto.front.GroupedDataDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.dto.front.OrderFrontDto;
 import com.project.fastfoodapi.entity.*;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -243,5 +245,43 @@ public class OrderService {
 
     public Pageable getPageable(int page, int size, Sort.Direction sort, String... properties){
         return PageRequest.of(page, size, Sort.by(sort, properties));
+    }
+
+    public List<GroupedDataDto<OrderStatus, OrderFrontDto>> getAllAndGroupByStatus(Integer size, Integer page, boolean desc) {
+        List<GroupedDataDto<OrderStatus, OrderFrontDto>> result=new ArrayList<>();
+        Pageable pageable = getPageable(page, size, desc ? Sort.Direction.DESC : Sort.Direction.ASC, "time", "id");
+        for (OrderStatus value : OrderStatus.values()) {
+            GroupedDataDto<OrderStatus, OrderFrontDto> data=new GroupedDataDto<>();
+            data.setTitle(value.getTitle());
+            data.setGroupedBy(value);
+            List<Order> order = orderRepository.findByOrderStatus(value, pageable);
+            if(order.isEmpty()){
+                data.setContent(new ArrayList<>());
+            }else{
+                data.setContent(orderMapper.orderToOrderFrontDto(order));
+            }
+            result.add(data);
+        }
+        return result;
+    }
+
+    public List<GroupedDataDto<OrderStatus, OrderFrontDto>> getTodayAllAndGroupByStatus(Integer size, Integer page, boolean desc) {
+        List<GroupedDataDto<OrderStatus, OrderFrontDto>> result=new ArrayList<>();
+        Pageable pageable = getPageable(page, size, desc ? Sort.Direction.DESC : Sort.Direction.ASC, "time", "id");
+        LocalDateTime from=LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime to=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        for (OrderStatus value : OrderStatus.values()) {
+            GroupedDataDto<OrderStatus, OrderFrontDto> data=new GroupedDataDto<>();
+            data.setTitle(value.getTitle());
+            data.setGroupedBy(value);
+            List<Order> order = orderRepository.findByOrderStatusAndTimeIsBetween(value, from, to, pageable);
+            if(order.isEmpty()){
+                data.setContent(new ArrayList<>());
+            }else{
+                data.setContent(orderMapper.orderToOrderFrontDto(order));
+            }
+            result.add(data);
+        }
+        return result;
     }
 }
