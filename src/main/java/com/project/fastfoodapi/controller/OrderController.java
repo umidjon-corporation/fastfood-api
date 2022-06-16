@@ -35,7 +35,7 @@ public class OrderController {
                                 @RequestParam(required = false) Long filial,
                                 @RequestParam(required = false) Boolean delivery,
                                 @RequestParam(required = false, defaultValue = "0") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false, defaultValue = "40") Integer size,
                                 @RequestParam(required = false) boolean desc
     ) {
         return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery, size, page, desc));
@@ -45,7 +45,7 @@ public class OrderController {
     @GetMapping("/group/status")
     public HttpEntity<?> getGroupByStatus(
                                 @RequestParam(required = false, defaultValue = "0") Integer page,
-                                @RequestParam(required = false, defaultValue = "20") Integer size,
+                                @RequestParam(required = false, defaultValue = "40") Integer size,
                                 @RequestParam(required = false) boolean desc
     ) {
         return ResponseEntity.ok().body(orderService.getAllAndGroupByStatus(size, page, desc));
@@ -55,7 +55,7 @@ public class OrderController {
     @GetMapping("/today/group/status")
     public HttpEntity<?> getTodayGroupByStatus(
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer size,
+            @RequestParam(required = false, defaultValue = "40") Integer size,
             @RequestParam(required = false) boolean desc
     ) {
         return ResponseEntity.ok().body(orderService.getTodayAllAndGroupByStatus(size, page, desc));
@@ -67,7 +67,7 @@ public class OrderController {
                                   @RequestParam(required = false) Long filial,
                                   @RequestParam(required = false) Boolean delivery,
                                   @RequestParam(required = false, defaultValue = "0") Integer page,
-                                  @RequestParam(required = false, defaultValue = "20") Integer size,
+                                  @RequestParam(required = false, defaultValue = "40") Integer size,
                                   @RequestParam(required = false) boolean desc
 
     ) {
