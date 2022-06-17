@@ -44,6 +44,19 @@ public class CategoryService {
                 .build();
     }
 
+    public boolean checkCategoryToInfinityConnection(Category category, Category parentCategory){
+        if(category.getId().equals(parentCategory.getId())){
+            return true;
+        }
+        if(parentCategory.getParent()==null){
+            return false;
+        }
+        if(parentCategory.getParent().getId().equals(category.getId())){
+            return true;
+        }
+        return checkCategoryToInfinityConnection(category, parentCategory.getParent());
+    }
+
     public ApiResponse<Category> edit(Long id, CategoryDto dto) {
         Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(id);
         if (optionalCategory.isEmpty()) {
@@ -57,7 +70,7 @@ public class CategoryService {
             category.setParent(null);
         } else {
             Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent());
-            if (parent.getParent().getId().equals(id)) {
+            if (checkCategoryToInfinityConnection(category, parent)) {
                 return ApiResponse.<Category>builder()
                         .message("You can't set category parent which parent equals to this category")
                         .build();
