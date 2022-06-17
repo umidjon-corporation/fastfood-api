@@ -11,6 +11,7 @@ import com.project.fastfoodapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,14 +29,18 @@ public class ProductService {
                     .message("Photo shouldn't be empty")
                     .build();
         }
+        if (dto.getPhoto().isEmpty()) {
+            return ApiResponse.<ProductFrontDto>builder()
+                    .message("Photo shouldn't be empty")
+                    .build();
+        }
         if (!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo type must be png, jpeg, ico, jpg")
                     .build();
         }
         Product product = productMapper.productDtoToProduct(dto);
-        Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(dto.getCategoryId());
-        product.setCategory(optionalCategory.orElse(product.getCategory()));
+        checkCategory(dto, product);
         Product save = productRepository.save(product);
         return ApiResponse.<ProductFrontDto>builder()
                 .success(true)
@@ -63,12 +68,21 @@ public class ProductService {
                     .build();
         }
         productMapper.updateProductFromProductDto(dto, product);
+        checkCategory(dto, product);
         Product save = productRepository.save(product);
         return ApiResponse.<ProductFrontDto>builder()
                 .success(true)
                 .data(productMapper.toFrontDto(save))
                 .message("Edited!")
                 .build();
+    }
+
+    private void checkCategory(ProductDto dto, Product product) {
+        Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(dto.getCategoryId());
+        List<Category> categoryChildren = categoryRepository.findByParent_IdAndActiveTrue(dto.getCategoryId());
+        if (categoryChildren.isEmpty()) {
+            product.setCategory(optionalCategory.orElse(product.getCategory()));
+        }
     }
 
 

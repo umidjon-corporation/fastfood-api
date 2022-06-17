@@ -4,8 +4,10 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.CategoryChildrenDto;
 import com.project.fastfoodapi.dto.CategoryDto;
 import com.project.fastfoodapi.entity.Category;
+import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.mapper.CategoryMapper;
 import com.project.fastfoodapi.repository.CategoryRepository;
+import com.project.fastfoodapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class CategoryService {
     final CategoryMapper categoryMapper;
     final CategoryRepository categoryRepository;
+    final ProductRepository productRepository;
 
     public ApiResponse<Category> add(CategoryDto dto) {
         Category category = categoryMapper.categoryDtoToCategory(dto);
@@ -25,7 +28,14 @@ public class CategoryService {
             category.setParent(null);
         } else {
             category.setParent(categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent()));
+            List<Product> productByParentCategory = productRepository.findAllByCategory_Id(category.getParent().getId());
+            if (!productByParentCategory.isEmpty()) {
+                return ApiResponse.<Category>builder()
+                        .message("There are products in the parent category. You must change their category or change the parent category")
+                        .build();
+            }
         }
+
         Category save = categoryRepository.save(category);
         return ApiResponse.<Category>builder()
                 .success(true)
@@ -47,12 +57,18 @@ public class CategoryService {
             category.setParent(null);
         } else {
             Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent());
-            if(parent.getParent().getId().equals(id)){
+            if (parent.getParent().getId().equals(id)) {
                 return ApiResponse.<Category>builder()
                         .message("You can't set category parent which parent equals to this category")
                         .build();
-            }else {
+            } else {
                 category.setParent(parent);
+            }
+            List<Product> productByParentCategory = productRepository.findAllByCategory_Id(parent.getId());
+            if (!productByParentCategory.isEmpty()) {
+                return ApiResponse.<Category>builder()
+                        .message("There are products in the parent category. You must change their category or change the parent category")
+                        .build();
             }
 
         }
