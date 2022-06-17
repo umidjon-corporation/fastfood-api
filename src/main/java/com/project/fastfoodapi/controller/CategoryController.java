@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +36,8 @@ public class CategoryController {
             return ResponseEntity.notFound().build();
         }
         if (children) {
-            List<CategoryChildrenDto> result = categoryService.getChildren(id);
-            return ResponseEntity.ok().body(CategoryChildrenDto.builder()
-                    .children(result)
-                    .parent(optionalCategory.get().getParent())
-                    .name(optionalCategory.get().getName())
-                    .id(optionalCategory.get().getId())
-                    .build());
+            CategoryChildrenDto result = categoryService.getChildren(optionalCategory.get());
+            return ResponseEntity.ok().body(result);
         }
         return ResponseEntity.ok().body(optionalCategory.get());
     }
@@ -68,8 +64,15 @@ public class CategoryController {
     }
 
     @GetMapping("/parent")
-    public HttpEntity<?> getAllCategoryParent() {
+    public HttpEntity<?> getAllCategoryParent(@RequestParam(required = false, defaultValue = "false") boolean children) {
         List<Category> categories = categoryRepository.findByParentNullAndActiveTrue();
+        if(children){
+            List<CategoryChildrenDto> result=new ArrayList<>();
+            for (Category category : categories) {
+                result.add(categoryService.getChildren(category));
+            }
+            return ResponseEntity.ok().body(result);
+        }
         return ResponseEntity.ok().body(categories);
     }
 
