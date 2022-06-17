@@ -28,7 +28,7 @@ public class CategoryService {
             category.setParent(null);
         } else {
             category.setParent(categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent()));
-            List<Product> productByParentCategory = productRepository.findAllByCategory_Id(category.getParent().getId());
+            List<Product> productByParentCategory = productRepository.findAllByCategory_IdAndActiveTrue(category.getParent().getId());
             if (!productByParentCategory.isEmpty()) {
                 return ApiResponse.<Category>builder()
                         .message("There are products in the parent category. You must change their category or change the parent category")
@@ -77,7 +77,7 @@ public class CategoryService {
             } else {
                 category.setParent(parent);
             }
-            List<Product> productByParentCategory = productRepository.findAllByCategory_Id(parent.getId());
+            List<Product> productByParentCategory = productRepository.findAllByCategory_IdAndActiveTrue(parent.getId());
             if (!productByParentCategory.isEmpty()) {
                 return ApiResponse.<Category>builder()
                         .message("There are products in the parent category. You must change their category or change the parent category")

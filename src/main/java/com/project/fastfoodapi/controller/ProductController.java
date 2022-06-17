@@ -30,8 +30,13 @@ public class ProductController {
 
 
     @GetMapping
-    public HttpEntity<?> getAll() {
-        return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findByActiveTrue()));
+    public HttpEntity<?> getAll(
+            @RequestParam(required = false) Long categoryId
+    ) {
+        if(categoryId==null){
+            return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findByActiveTrue()));
+        }
+        return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findAllByCategory_IdAndActiveTrue(categoryId)));
     }
 
     @GetMapping("/{id}")
