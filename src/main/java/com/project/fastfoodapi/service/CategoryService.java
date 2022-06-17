@@ -46,7 +46,15 @@ public class CategoryService {
         if (dto.getParentId() == null) {
             category.setParent(null);
         } else {
-            category.setParent(categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent()));
+            Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent());
+            if(parent.getParent().getId().equals(id)){
+                return ApiResponse.<Category>builder()
+                        .message("You can't set category parent which parent equals to this category")
+                        .build();
+            }else {
+                category.setParent(parent);
+            }
+
         }
         Category save = categoryRepository.save(category);
         return ApiResponse.<Category>builder()
