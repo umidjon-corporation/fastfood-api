@@ -13,6 +13,7 @@ public interface ProductMapper {
     Product productDtoToProduct(ProductDto productDto);
 
     @Mapping(source = "id", target = "photo.url", qualifiedByName = "url")
+    @Mapping(source = "id", target = "id")
     ProductFrontDto toFrontDto(Product product);
 
     List<ProductFrontDto> toFrontDto(List<Product> products);

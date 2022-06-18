@@ -23,4 +23,5 @@ public class HumanFrontDto {
     private Language lang;
     private UserType type;
     private AttachmentDto photo;
+    private Long id;
 }

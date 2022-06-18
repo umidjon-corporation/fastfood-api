@@ -17,4 +17,5 @@ public class FilialDto implements Serializable {
     private final LocalTime finish;
     private final Float latitude;
     private final Float longitude;
+    private final Long id;
 }

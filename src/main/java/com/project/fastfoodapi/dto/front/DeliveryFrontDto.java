@@ -14,4 +14,5 @@ public class DeliveryFrontDto implements Serializable {
     private final Float latitude;
     private final String address;
     private final HumanFrontDto courier;
+    private final Long id;
 }

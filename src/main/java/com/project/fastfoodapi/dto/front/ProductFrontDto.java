@@ -16,4 +16,5 @@ public class ProductFrontDto {
     private AttachmentDto photo;
     private BigDecimal price;
     private Category category;
+    private Long id;
 }
