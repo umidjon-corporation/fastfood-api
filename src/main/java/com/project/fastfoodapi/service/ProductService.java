@@ -24,12 +24,7 @@ public class ProductService {
 
 
     public ApiResponse<ProductFrontDto> add(ProductDto dto) {
-        if (dto.getPhoto().isEmpty()) {
-            return ApiResponse.<ProductFrontDto>builder()
-                    .message("Photo shouldn't be empty")
-                    .build();
-        }
-        if (dto.getPhoto().isEmpty()) {
+        if (dto.getPhoto()==null || dto.getPhoto().isEmpty()) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo shouldn't be empty")
                     .build();
