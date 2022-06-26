@@ -3,6 +3,7 @@ package com.project.fastfoodapi.service;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.ProductDto;
 import com.project.fastfoodapi.dto.front.ProductFrontDto;
+import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Category;
 import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.mapper.ProductMapper;
@@ -52,15 +53,12 @@ public class ProductService {
                     .build();
         }
         Product product = optionalProduct.get();
-        if (dto.getPhoto().isEmpty()) {
-            return ApiResponse.<ProductFrontDto>builder()
-                    .message("Photo shouldn't be empty")
-                    .build();
-        }
-        if (!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
-            return ApiResponse.<ProductFrontDto>builder()
-                    .message("Photo type must be png, jpeg, ico, jpg")
-                    .build();
+        if(dto.getPhoto()!=null && !dto.getPhoto().isEmpty()){
+            if (dto.getPhoto().getOriginalFilename()==null || !dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+                return ApiResponse.<ProductFrontDto>builder()
+                        .message("Photo type must be png, jpeg, ico, jpg")
+                        .build();
+            }
         }
         productMapper.updateProductFromProductDto(dto, product);
         checkCategory(dto, product);

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -12,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class AttachmentDto {
     private String name, type, url;
     private Long size;
+    private LocalDateTime lastUpdated;
 }

@@ -1,6 +1,7 @@
 package com.project.fastfoodapi.listener;
 
 import com.project.fastfoodapi.entity.Order;
+import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.event.spi.PostInsertEvent;
@@ -27,6 +28,10 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             res.put("status", order.getOrderStatus());
             res.put("type", "NEW");
             messageSendingOperations.convertAndSend("/update/order", res);
+        }else if(entity instanceof Product product){
+            Map<String, Object> res = new LinkedHashMap<>();
+            res.put("type", "NEW");
+            messageSendingOperations.convertAndSend("/update/product", res);
         }
     }
 
@@ -49,6 +54,11 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             res.put("status", order.getOrderStatus());
             res.put("type", "UPDATE");
             messageSendingOperations.convertAndSend("/update/order", res);
+        }else if(entity instanceof Product product){
+            Map<String, Object> res = new LinkedHashMap<>();
+            res.put("id", product.getId());
+            res.put("type", "UPDATE");
+            messageSendingOperations.convertAndSend("/update/product", res);
         }
     }
 }

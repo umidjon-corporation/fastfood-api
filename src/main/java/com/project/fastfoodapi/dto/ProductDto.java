@@ -16,4 +16,5 @@ public class ProductDto implements Serializable {
     private final BigDecimal price;
     private final String description;
     private final Long categoryId;
+
 }
