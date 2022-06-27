@@ -23,7 +23,6 @@ public class Category {
     @ManyToOne()
     private Category parent;
 
-
     @Builder.Default
     @Column(nullable = false)
     @JsonIgnore

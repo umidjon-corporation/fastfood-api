@@ -19,7 +19,6 @@ public interface ProductMapper {
 
     List<ProductFrontDto> toFrontDto(List<Product> products);
 
-    @Mapping(source = "categoryId", target = "category.id")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateProductFromProductDto(ProductDto productDto, @MappingTarget Product product);
 

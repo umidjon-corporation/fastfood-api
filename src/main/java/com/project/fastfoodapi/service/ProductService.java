@@ -36,7 +36,10 @@ public class ProductService {
                     .build();
         }
         Product product = productMapper.productDtoToProduct(dto);
-        checkCategory(dto, product);
+        ApiResponse<ProductFrontDto> apiResponse = checkCategory(dto, product);
+        if (!apiResponse.isSuccess()) {
+            return apiResponse;
+        }
         Product save = productRepository.save(product);
         return ApiResponse.<ProductFrontDto>builder()
                 .success(true)
@@ -61,7 +64,10 @@ public class ProductService {
             }
         }
         productMapper.updateProductFromProductDto(dto, product);
-        checkCategory(dto, product);
+        ApiResponse<ProductFrontDto> apiResponse = checkCategory(dto, product);
+        if (!apiResponse.isSuccess()) {
+            return apiResponse;
+        }
         Product save = productRepository.save(product);
         return ApiResponse.<ProductFrontDto>builder()
                 .success(true)
@@ -70,12 +76,18 @@ public class ProductService {
                 .build();
     }
 
-    private void checkCategory(ProductDto dto, Product product) {
+    private ApiResponse<ProductFrontDto> checkCategory(ProductDto dto, Product product) {
         Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(dto.getCategoryId());
         List<Category> categoryChildren = categoryRepository.findByParent_IdAndActiveTrue(dto.getCategoryId());
         if (categoryChildren.isEmpty()) {
             product.setCategory(optionalCategory.orElse(product.getCategory()));
+            return ApiResponse.<ProductFrontDto>builder()
+                    .success(true)
+                    .build();
         }
+        return ApiResponse.<ProductFrontDto>builder()
+                .message("You can't set as category which have children category")
+                .build();
     }
 
 

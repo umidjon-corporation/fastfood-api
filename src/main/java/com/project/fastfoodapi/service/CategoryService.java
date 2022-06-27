@@ -68,24 +68,25 @@ public class CategoryService {
                     .build();
         }
         Category category = optionalCategory.get();
-        categoryMapper.updateCategoryFromCategoryDto(dto, category);
+        category.setNameRu(dto.getNameRu());
+        category.setNameUz(dto.getNameUz());
         if (dto.getParentId() == null) {
             category.setParent(null);
         } else {
             Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(null);
-            if (parent!=null && checkCategoryToInfinityConnection(category, parent)) {
-                return ApiResponse.<Category>builder()
-                        .message("You can't set category parent which parent equals to this category")
-                        .build();
-            }
-            category.setParent(parent);
             if (parent!=null){
+                if(checkCategoryToInfinityConnection(category, parent)){
+                    return ApiResponse.<Category>builder()
+                            .message("You can't set category parent which parent equals to this category")
+                            .build();
+                }
                 List<Product> productByParentCategory = productRepository.findAllByCategory_IdAndActiveTrue(parent.getId());
                 if (!productByParentCategory.isEmpty()) {
                     return ApiResponse.<Category>builder()
                             .message("There are products in the parent category. You must change their category or change the parent category")
                             .build();
                 }
+                category.setParent(parent);
             }
         }
 
