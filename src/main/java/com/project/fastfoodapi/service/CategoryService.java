@@ -120,7 +120,8 @@ public class CategoryService {
     public CategoryChildrenDto getChildren(Category category) {
         CategoryChildrenDto result = CategoryChildrenDto.builder()
                 .id(category.getId())
-                .name(category.getName())
+                .nameUz(category.getNameUz())
+                .nameRu(category.getNameRu())
                 .build();
         List<Category> categories = categoryRepository.findByParent_IdAndActiveTrue(category.getId());
         if (categories.isEmpty()) {

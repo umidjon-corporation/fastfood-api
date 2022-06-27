@@ -8,6 +8,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 public class CategoryDto implements Serializable {
-    private final String name;
+    private final String nameUz, nameRu;
     private final Long parentId;
 }

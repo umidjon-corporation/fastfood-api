@@ -19,7 +19,7 @@ public class Category {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String nameUz, nameRu;
     @ManyToOne()
     private Category parent;
 

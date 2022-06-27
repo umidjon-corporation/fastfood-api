@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryChildrenDto {
-    private String name;
+    private String nameUz, nameRu;
     private Long id;
     private Category parent;
     @Builder.Default
