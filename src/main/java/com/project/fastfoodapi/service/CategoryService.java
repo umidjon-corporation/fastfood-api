@@ -45,6 +45,9 @@ public class CategoryService {
     }
 
     public boolean checkCategoryToInfinityConnection(Category category, Category parentCategory){
+        if(category==null || parentCategory==null){
+            return false;
+        }
         if(category.getId().equals(parentCategory.getId())){
             return true;
         }
@@ -70,21 +73,22 @@ public class CategoryService {
             category.setParent(null);
         } else {
             Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent());
-            if (checkCategoryToInfinityConnection(category, parent)) {
+            if (parent!=null && checkCategoryToInfinityConnection(category, parent)) {
                 return ApiResponse.<Category>builder()
                         .message("You can't set category parent which parent equals to this category")
                         .build();
-            } else {
-                category.setParent(parent);
             }
-            List<Product> productByParentCategory = productRepository.findAllByCategory_IdAndActiveTrue(parent.getId());
-            if (!productByParentCategory.isEmpty()) {
-                return ApiResponse.<Category>builder()
-                        .message("There are products in the parent category. You must change their category or change the parent category")
-                        .build();
+            category.setParent(parent);
+            if (parent!=null){
+                List<Product> productByParentCategory = productRepository.findAllByCategory_IdAndActiveTrue(parent.getId());
+                if (!productByParentCategory.isEmpty()) {
+                    return ApiResponse.<Category>builder()
+                            .message("There are products in the parent category. You must change their category or change the parent category")
+                            .build();
+                }
             }
-
         }
+
         Category save = categoryRepository.save(category);
         return ApiResponse.<Category>builder()
                 .success(true)
