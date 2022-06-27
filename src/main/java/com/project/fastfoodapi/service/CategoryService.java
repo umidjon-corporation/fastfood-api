@@ -72,7 +72,7 @@ public class CategoryService {
         if (dto.getParentId() == null) {
             category.setParent(null);
         } else {
-            Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(category.getParent());
+            Category parent = categoryRepository.findByIdAndActiveTrue(dto.getParentId()).orElse(null);
             if (parent!=null && checkCategoryToInfinityConnection(category, parent)) {
                 return ApiResponse.<Category>builder()
                         .message("You can't set category parent which parent equals to this category")
