@@ -1,6 +1,6 @@
 package com.project.fastfoodapi.dto.front;
 
-import com.project.fastfoodapi.dto.FilialDto;
+import com.project.fastfoodapi.dto.BranchDto;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
 import com.project.fastfoodapi.entity.enums.PayType;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,7 +22,7 @@ public class OrderFrontDto implements Serializable {
     private final HumanFrontDto operator, client;
     private final PayType payType;
     private final DeliveryFrontDto delivery;
-    private final FilialDto filial;
+    private final BranchDto branch;
     private final OrderStatus orderStatus;
     private final BigDecimal amount;
 }

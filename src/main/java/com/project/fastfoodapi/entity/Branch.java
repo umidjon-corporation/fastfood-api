@@ -12,8 +12,8 @@ import java.time.LocalTime;
 @Setter
 @ToString
 @Entity
-@Table(name = "filials")
-public class Filial {
+@Table(name = "branchs")
+public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -15,7 +15,7 @@ import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.DeliveryMapper;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.mapper.OrderMapper;
-import com.project.fastfoodapi.repository.FilialRepository;
+import com.project.fastfoodapi.repository.BranchRepository;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
@@ -40,7 +40,7 @@ public class OrderService {
     final OrderMapper orderMapper;
     final ProductRepository productRepository;
     final HumanRepository humanRepository;
-    final FilialRepository filialRepository;
+    final BranchRepository branchRepository;
     final HumanMapper humanMapper;
     final DeliveryMapper deliveryMapper;
 
@@ -67,8 +67,8 @@ public class OrderService {
         order.setAmount(BigDecimal.valueOf(all));
         Optional<Human> optionalClient = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, dto.getClientId());
         optionalClient.ifPresent(order::setClient);
-        Optional<Filial> optionalFilial = filialRepository.findByIdAndActiveTrue(dto.getFilialId());
-        optionalFilial.ifPresent(order::setFilial);
+        Optional<Branch> optionalBranch = branchRepository.findByIdAndActiveTrue(dto.getBranchId());
+        optionalBranch.ifPresent(order::setBranch);
         //TODO calc delivery price
         order.getDelivery().setPrice(BigDecimal.ZERO);
         Order save = orderRepository.save(order);
@@ -166,7 +166,7 @@ public class OrderService {
                 .build();
     }
 
-    public List<OrderFrontDto> getAll(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
+    public List<OrderFrontDto> getAll(String status, Long branch, Boolean delivery, Integer size, Integer page, boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
         Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
@@ -174,27 +174,27 @@ public class OrderService {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ignore) {
         }
-        if (orderStatus == null && filial == null && delivery == null) {
+        if (orderStatus == null && branch == null && delivery == null) {
             return orderMapper.orderToOrderFrontDto(orderRepository.findAll(pageable).getContent());
         }
         if (delivery == null) {
-            if (filial == null) {
+            if (branch == null) {
                 all = orderRepository.findByOrderStatus(orderStatus, pageable);
             } else {
-                all = orderRepository.findByOrderStatusAndFilial_Id(orderStatus, filial, pageable);
+                all = orderRepository.findByOrderStatusAndBranch_Id(orderStatus, branch, pageable);
             }
         } else {
             if (delivery) {
-                if (filial == null) {
+                if (branch == null) {
                     all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(orderStatus, filial, pageable);
+                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNull(orderStatus, branch, pageable);
                 }
             } else {
-                if (filial == null) {
+                if (branch == null) {
                     all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(orderStatus, filial, pageable);
+                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNull(orderStatus, branch, pageable);
                 }
             }
 
@@ -203,7 +203,7 @@ public class OrderService {
         return orderMapper.orderToOrderFrontDto(all);
     }
 
-    public List<OrderFrontDto> getAllToday(String status, Long filial, Boolean delivery, Integer size, Integer page, boolean desc) {
+    public List<OrderFrontDto> getAllToday(String status, Long branch, Boolean delivery, Integer size, Integer page, boolean desc) {
         List<Order> all;
         OrderStatus orderStatus = null;
         Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
@@ -213,27 +213,27 @@ public class OrderService {
             orderStatus = OrderStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ignore) {
         }
-        if (orderStatus == null && filial == null && delivery == null) {
+        if (orderStatus == null && branch == null && delivery == null) {
             return orderMapper.orderToOrderFrontDto(orderRepository.findByTimeIsBetween(from ,to, pageable));
         }
         if (delivery == null) {
-            if (filial == null) {
+            if (branch == null) {
                 all = orderRepository.findByOrderStatusAndTimeIsBetween(orderStatus, from, to, pageable);
             } else {
-                all = orderRepository.findByOrderStatusAndFilial_IdAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+                all = orderRepository.findByOrderStatusAndBranch_IdAndTimeIsBetween(orderStatus, branch, from, to, pageable);
             }
         } else {
             if (delivery) {
-                if (filial == null) {
+                if (branch == null) {
                     all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNullAndTimeIsBetween(orderStatus, from, to, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(orderStatus, branch, from, to, pageable);
                 }
             } else {
-                if (filial == null) {
+                if (branch == null) {
                     all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNullAndTimeIsBetween(orderStatus, from, to, pageable);
                 } else {
-                    all = orderRepository.findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(orderStatus, filial, from, to, pageable);
+                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(orderStatus, branch, from, to, pageable);
                 }
             }
 

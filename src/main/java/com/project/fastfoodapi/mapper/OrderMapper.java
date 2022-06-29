@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {
-        DeliveryMapper.class, FilialMapper.class, HumanMapper.class, ProductMapper.class
+        DeliveryMapper.class, BranchMapper.class, HumanMapper.class, ProductMapper.class
 })
 public interface OrderMapper {
     @Mapping(source = "productId", target = "product.id")
@@ -20,7 +20,7 @@ public interface OrderMapper {
 
     OrderProductFrontDto orderProductToOrderProductFrontDto(OrderProduct orderProduct);
 
-    @Mapping(source = "filialId", target = "filial.id")
+    @Mapping(source = "branchId", target = "branch.id")
     @Mapping(source = "clientId", target = "client.id")
     Order orderDtoToOrder(OrderDto orderDto);
 

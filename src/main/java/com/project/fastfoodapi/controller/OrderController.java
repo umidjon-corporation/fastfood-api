@@ -8,7 +8,7 @@ import com.project.fastfoodapi.dto.front.OrderFrontDto;
 import com.project.fastfoodapi.entity.Order;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
 import com.project.fastfoodapi.mapper.OrderMapper;
-import com.project.fastfoodapi.repository.FilialRepository;
+import com.project.fastfoodapi.repository.BranchRepository;
 import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -27,18 +27,18 @@ public class OrderController {
     final OrderRepository orderRepository;
     final OrderMapper orderMapper;
     final OrderService orderService;
-    final FilialRepository filialRepository;
+    final BranchRepository branchRepository;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'COURIER')")
     @GetMapping
     public HttpEntity<?> getAll(@RequestParam(required = false, defaultValue = "") String status,
-                                @RequestParam(required = false) Long filial,
+                                @RequestParam(required = false) Long branch,
                                 @RequestParam(required = false) Boolean delivery,
                                 @RequestParam(required = false, defaultValue = "0") Integer page,
                                 @RequestParam(required = false, defaultValue = "40") Integer size,
                                 @RequestParam(required = false) boolean desc
     ) {
-        return ResponseEntity.ok().body(orderService.getAll(status, filial, delivery, size, page, desc));
+        return ResponseEntity.ok().body(orderService.getAll(status, branch, delivery, size, page, desc));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'COURIER')")
@@ -64,14 +64,14 @@ public class OrderController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'COURIER')")
     @GetMapping("/today")
     public HttpEntity<?> getToday(@RequestParam(required = false, defaultValue = "") String status,
-                                  @RequestParam(required = false) Long filial,
+                                  @RequestParam(required = false) Long branch,
                                   @RequestParam(required = false) Boolean delivery,
                                   @RequestParam(required = false, defaultValue = "0") Integer page,
                                   @RequestParam(required = false, defaultValue = "40") Integer size,
                                   @RequestParam(required = false) boolean desc
 
     ) {
-        return ResponseEntity.ok().body(orderService.getAllToday(status, filial, delivery, size, page, desc));
+        return ResponseEntity.ok().body(orderService.getAllToday(status, branch, delivery, size, page, desc));
     }
 
     @GetMapping("/{id}")

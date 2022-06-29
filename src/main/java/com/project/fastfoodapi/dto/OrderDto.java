@@ -13,6 +13,6 @@ public class OrderDto implements Serializable {
     private final List<OrderProductDto> products;
     private final PayType payType;
     private final DeliveryDto delivery;
-    private final Long filialId;
+    private final Long branchId;
     private final Long clientId;
 }

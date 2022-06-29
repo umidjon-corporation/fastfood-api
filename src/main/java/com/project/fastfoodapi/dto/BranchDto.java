@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @AllArgsConstructor
 @Getter
-public class FilialDto implements Serializable {
+public class BranchDto implements Serializable {
     private final String nameUz;
     private final String nameRu;
     private final String intended;

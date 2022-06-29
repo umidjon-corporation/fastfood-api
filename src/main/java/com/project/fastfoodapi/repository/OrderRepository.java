@@ -21,21 +21,21 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByOrderStatusAndDelivery_Courier_idIsNullAndTimeIsBetween(OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_Id(OrderStatus orderStatus, Long filial_id, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_Id(OrderStatus orderStatus, Long branch_id, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_IdAndTimeIsBetween(OrderStatus orderStatus, Long filial_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_IdAndTimeIsBetween(OrderStatus orderStatus, Long branch_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNull(OrderStatus orderStatus, Long filial_id, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNull(OrderStatus orderStatus, Long branch_id, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(OrderStatus orderStatus, Long filial_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(OrderStatus orderStatus, Long branch_id, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByOrderStatusAndDelivery_Courier_idIsNotNull(OrderStatus orderStatus, Pageable pageable);
 
     List<Order> findByOrderStatusAndDelivery_Courier_idIsNotNullAndTimeIsBetween(OrderStatus orderStatus, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNull(OrderStatus orderStatus, Long filial, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNull(OrderStatus orderStatus, Long branch, Pageable pageable);
 
-    List<Order> findByOrderStatusAndFilial_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(OrderStatus orderStatus, Long filial, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    List<Order> findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(OrderStatus orderStatus, Long branch, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByDelivery_Courier_Id(Long courier_id);
 }

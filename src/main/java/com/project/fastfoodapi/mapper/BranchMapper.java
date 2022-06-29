@@ -1,18 +1,18 @@
 package com.project.fastfoodapi.mapper;
 
-import com.project.fastfoodapi.dto.FilialDto;
-import com.project.fastfoodapi.entity.Filial;
+import com.project.fastfoodapi.dto.BranchDto;
+import com.project.fastfoodapi.entity.Branch;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
-public interface FilialMapper {
-    Filial filialDtoToFilial(FilialDto filialDto);
+public interface BranchMapper {
+    Branch branchDtoToBranch(BranchDto branchDto);
 
-    FilialDto filialToFilialDto(Filial filial);
+    BranchDto branchToBranchDto(Branch branch);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateFilialFromFilialDto(FilialDto filialDto, @MappingTarget Filial filial);
+    void updateBranchFromBranchDto(BranchDto branchDto, @MappingTarget Branch branch);
 }

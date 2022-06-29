@@ -43,7 +43,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Filial filial;
+    private Branch branch;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
