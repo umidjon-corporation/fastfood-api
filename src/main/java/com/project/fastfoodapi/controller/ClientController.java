@@ -9,6 +9,7 @@ import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.service.ClientService;
+import com.project.fastfoodapi.service.HumanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;

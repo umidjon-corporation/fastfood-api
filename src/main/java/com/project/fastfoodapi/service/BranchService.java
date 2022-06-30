@@ -51,6 +51,8 @@ public class BranchService {
                     .message("Branch with id=(" + id+") not found")
                     .build();
         }
+        optionalBranch.get().setActive(false);
+        branchRepository.save(optionalBranch.get());
         return ApiResponse.builder()
                 .success(true)
                 .message("Deleted!")

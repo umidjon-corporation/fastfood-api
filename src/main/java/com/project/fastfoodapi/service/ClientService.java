@@ -43,9 +43,6 @@ public class ClientService {
         }
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
-        if (dto.getStatus() == null) {
-            human.setStatus(ClientStatus.ACTIVE);
-        }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))
