@@ -9,7 +9,7 @@ import com.project.fastfoodapi.dto.front.GroupedDataDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.dto.front.OrderFrontDto;
 import com.project.fastfoodapi.entity.*;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.DeliveryMapper;
@@ -65,7 +65,7 @@ public class OrderService {
         }
         order.getProducts().removeIf(orderProduct -> orderProduct.getAmount() == null);
         order.setAmount(BigDecimal.valueOf(all));
-        Optional<Human> optionalClient = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, dto.getClientId());
+        Optional<Human> optionalClient = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, dto.getClientId());
         optionalClient.ifPresent(order::setClient);
         Optional<Branch> optionalBranch = branchRepository.findByIdAndActiveTrue(dto.getBranchId());
         optionalBranch.ifPresent(order::setBranch);

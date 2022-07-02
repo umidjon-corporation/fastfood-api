@@ -3,11 +3,11 @@ package com.project.fastfoodapi.controller;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
-import com.project.fastfoodapi.service.HumanService;
+import com.project.fastfoodapi.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +22,12 @@ import java.util.Optional;
 public class EmployeeController {
     final HumanMapper humanMapper;
     final HumanRepository humanRepository;
-    final HumanService humanService;
+    final EmployeeService employeeService;
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public HttpEntity<?> getOne(@PathVariable Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() == UserType.CLIENT) {
             return ResponseEntity.badRequest().body(ApiResponse.builder()
                     .message("Employee with id=(" + id + ") not found")
@@ -45,7 +45,7 @@ public class EmployeeController {
     public HttpEntity<?> getAllCourier() {
         return ResponseEntity.ok().body(
                 humanMapper.humanToHumanFrontDto(
-                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.COURIER, ClientStatus.DELETED)
+                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.COURIER, HumanStatus.DELETED)
                 )
         );
     }
@@ -55,7 +55,7 @@ public class EmployeeController {
     public HttpEntity<?> getAllOperator() {
         return ResponseEntity.ok().body(
                 humanMapper.humanToHumanFrontDto(
-                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.OPERATOR, ClientStatus.DELETED)
+                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.OPERATOR, HumanStatus.DELETED)
                 )
         );
     }
@@ -65,7 +65,7 @@ public class EmployeeController {
     public HttpEntity<?> getAllAdmin() {
         return ResponseEntity.ok().body(
                 humanMapper.humanToHumanFrontDto(
-                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, ClientStatus.DELETED)
+                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, HumanStatus.DELETED)
                 )
         );
     }
@@ -73,28 +73,28 @@ public class EmployeeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping()
     public HttpEntity<?> add(@ModelAttribute EmployeeDto dto) {
-        ApiResponse<?> apiResponse = humanService.add(dto);
+        ApiResponse<?> apiResponse = employeeService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@ModelAttribute EmployeeDto dto, @PathVariable Long id) {
-        ApiResponse<?> apiResponse = humanService.edit(id, dto);
+        ApiResponse<?> apiResponse = employeeService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id) {
-        ApiResponse<?> apiResponse = humanService.delete(id);
+        ApiResponse<?> apiResponse = employeeService.delete(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
-        ApiResponse<Object> apiResponse = humanService.block(id);
+        ApiResponse<Object> apiResponse = employeeService.block(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 }

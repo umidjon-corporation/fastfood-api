@@ -2,7 +2,7 @@ package com.project.fastfoodapi.controller;
 
 import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.repository.HumanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -24,7 +24,7 @@ public class HomeController {
 
     @GetMapping("/assets/human/{id}/photo")
     public HttpEntity<?> getPhoto(@PathVariable Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

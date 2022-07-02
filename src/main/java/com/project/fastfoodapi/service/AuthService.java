@@ -4,7 +4,7 @@ import com.project.fastfoodapi.config.PropertySource;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.LoginDto;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.model.AuthTokenModel;
 import com.project.fastfoodapi.repository.HumanRepository;
@@ -41,34 +41,37 @@ public class AuthService implements UserDetailsService {
         return new SecretKeySpec(apiKeySecretBytes, JWTHelper.SIGNATURE_ALGORITHM.getJcaName());
     }
 
-    public AuthTokenModel getJwtToken(LoginDto dto, HttpServletResponse res) {
-        Map<String, Object> claims = getUserInfo(dto);
+    public ApiResponse<String> login(LoginDto dto, HttpServletResponse res){
+        Map<String, Object> claims = new HashMap<>();
+        Optional<Human> optionalHuman = humanRepository.findByNumber(dto.getLogin());
+        if (optionalHuman.isEmpty() ||
+                optionalHuman.get().getUserType() == UserType.CLIENT ||
+                !passwordEncoder.matches(dto.getPassword(), optionalHuman.get().getPassword())) {
+            return ApiResponse.<String>builder()
+                    .message("Username or password not valid")
+                    .build();
+        }
+        claims.put(TokenClaims.USER_ID.getKey(), optionalHuman.get().getId());
+        claims.put(TokenClaims.USER_NAME.getKey(), optionalHuman.get().getName());
+        claims.put(TokenClaims.USER_NUMBER.getKey(), optionalHuman.get().getNumber());
+        return ApiResponse.<String>builder()
+                .success(true)
+                .message("Success authenticated")
+                .data(getJwtToken(claims, res))
+                .build();
+    }
+
+    public String getJwtToken(Map<String, Object> claims, HttpServletResponse res) {
         String jwt = JWTHelper.creatJWT(claims, "Auth service", propertySource.getAppAuthSecret());
         Cookie cookie = new Cookie(propertySource.getCookieName(), jwt);
         cookie.setMaxAge(propertySource.getExpire());
         cookie.setPath("/");
         cookie.setSecure(true);
         res.addCookie(cookie);
-        return getTokenModel(jwt);
+        return jwt;
     }
 
-    @SneakyThrows
-    private final Map<String, Object> getUserInfo(LoginDto dto) {
-        final Map<String, Object> claims = new HashMap<>();
-        Optional<Human> optionalHuman = humanRepository.findByNumber(dto.getLogin());
-        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.ADMIN
-                || !passwordEncoder.matches(dto.getPassword(), optionalHuman.get().getPassword())) {
-            throw new AccessDeniedException("Username or password not valid");
-        }
-        claims.put(TokenClaims.USER_ID.getKey(), optionalHuman.get().getId());
-        claims.put(TokenClaims.USER_NAME.getKey(), optionalHuman.get().getName());
-        claims.put(TokenClaims.USER_NUMBER.getKey(), optionalHuman.get().getNumber());
-        return claims;
-    }
 
-    private final AuthTokenModel getTokenModel(String jwt) {
-        return new AuthTokenModel(propertySource.getAppAuthTokenType(), jwt);
-    }
 
     public ApiResponse<Map<String, Object>> checkJwt(String token) {
         try {
@@ -81,7 +84,7 @@ public class AuthService implements UserDetailsService {
 
         Map<String, Object> claims = JWTHelper.getClaims(getSecretKey(), token);
         Long id = Long.parseLong(claims.get(TokenClaims.USER_ID.getKey()).toString());
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || !optionalHuman.get().getNumber().equals(claims.get(TokenClaims.USER_NUMBER.getKey()))) {
             return ApiResponse.<Map<String, Object>>builder()
                     .message("Token not valid")

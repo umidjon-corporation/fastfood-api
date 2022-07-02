@@ -4,7 +4,7 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +14,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class HumanService {
+public class EmployeeService {
     final HumanRepository humanRepository;
     final HumanMapper humanMapper;
 
     public ApiResponse<HumanFrontDto> add(EmployeeDto dto) {
         Human human = humanMapper.humanDtoToHuman(dto);
         if (dto.getStatus() == null) {
-            human.setStatus(ClientStatus.ACTIVE);
+            human.setStatus(HumanStatus.ACTIVE);
         }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
@@ -32,7 +32,7 @@ public class HumanService {
     }
 
     public ApiResponse<HumanFrontDto> edit(Long id, EmployeeDto dto) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message(dto.getType().name() + " with id=(" + id + ") not found")
@@ -41,7 +41,7 @@ public class HumanService {
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
         if (dto.getStatus() == null) {
-            human.setStatus(ClientStatus.ACTIVE);
+            human.setStatus(HumanStatus.ACTIVE);
         }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
@@ -52,13 +52,13 @@ public class HumanService {
     }
 
     public ApiResponse<?> delete(Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
             return ApiResponse.builder()
                     .message("Employee with id=(" + id + ") not found")
                     .build();
         }
-        optionalHuman.get().setStatus(ClientStatus.DELETED);
+        optionalHuman.get().setStatus(HumanStatus.DELETED);
         humanRepository.save(optionalHuman.get());
         return ApiResponse.builder()
                 .success(true)
@@ -67,13 +67,13 @@ public class HumanService {
     }
 
     public ApiResponse<Object> block(Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
             return ApiResponse.builder()
                     .message("Human with id=(" + id + ") not found")
                     .build();
         }
-        optionalHuman.get().setStatus(ClientStatus.BLOCKED);
+        optionalHuman.get().setStatus(HumanStatus.BLOCKED);
         humanRepository.save(optionalHuman.get());
         return ApiResponse.builder()
                 .success(true)

@@ -1,7 +1,7 @@
 package com.project.fastfoodapi.component;
 
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -25,7 +25,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<Human> humans = humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, ClientStatus.DELETED);
+        List<Human> humans = humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.ADMIN, HumanStatus.DELETED);
         if (initMode.equalsIgnoreCase("always") || humans.isEmpty()) {
             humanRepository.save(Human.builder()
                     .userType(UserType.ADMIN)

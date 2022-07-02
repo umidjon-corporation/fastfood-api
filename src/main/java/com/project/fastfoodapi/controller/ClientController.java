@@ -4,12 +4,11 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.service.ClientService;
-import com.project.fastfoodapi.service.HumanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,7 @@ public class ClientController {
     public HttpEntity<?> getAll() {
         return ResponseEntity.ok().body(
                 humanMapper.humanToHumanFrontDto(
-                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.CLIENT, ClientStatus.DELETED)
+                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.CLIENT, HumanStatus.DELETED)
                 )
         );
     }
@@ -40,7 +39,7 @@ public class ClientController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ResponseEntity.badRequest().body(ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")

@@ -1,5 +1,5 @@
 package com.project.fastfoodapi.entity.enums;
 
-public enum ClientStatus {
+public enum HumanStatus {
     BLOCKED, ACTIVE, DELETED
 }

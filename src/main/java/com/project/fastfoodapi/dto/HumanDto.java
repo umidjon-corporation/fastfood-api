@@ -1,6 +1,6 @@
 package com.project.fastfoodapi.dto;
 
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class HumanDto implements Serializable {
     private final String name;
     private final String number;
-    private final ClientStatus status;
+    private final HumanStatus status;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private final LocalDate birthdate;
     private final Region region;

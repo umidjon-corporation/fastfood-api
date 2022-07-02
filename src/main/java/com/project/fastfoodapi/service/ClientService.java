@@ -4,7 +4,7 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
@@ -23,7 +23,7 @@ public class ClientService {
         Human human = humanMapper.humanDtoToHuman(dto);
         human.setUserType(UserType.CLIENT);
         if (dto.getStatus() == null) {
-            human.setStatus(ClientStatus.ACTIVE);
+            human.setStatus(HumanStatus.ACTIVE);
         }
         human.setUserType(UserType.CLIENT);
         Human save = humanRepository.save(human);
@@ -35,7 +35,7 @@ public class ClientService {
     }
 
     public ApiResponse<HumanFrontDto> edit(Long id, HumanDto dto) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Client with id=(" + id + ") not found")
@@ -52,13 +52,13 @@ public class ClientService {
     }
 
     public ApiResponse<?> delete(Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();
         }
-        optionalHuman.get().setStatus(ClientStatus.DELETED);
+        optionalHuman.get().setStatus(HumanStatus.DELETED);
         humanRepository.save(optionalHuman.get());
         return ApiResponse.builder()
                 .success(true)
@@ -67,13 +67,13 @@ public class ClientService {
     }
 
     public ApiResponse<Object> block(Long id) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(ClientStatus.DELETED, id);
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
             return ApiResponse.builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();
         }
-        optionalHuman.get().setStatus(ClientStatus.BLOCKED);
+        optionalHuman.get().setStatus(HumanStatus.BLOCKED);
         humanRepository.save(optionalHuman.get());
         return ApiResponse.builder()
                 .success(true)

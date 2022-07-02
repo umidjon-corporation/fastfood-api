@@ -22,8 +22,9 @@ public class AuthController {
     final PropertySource propertySource;
 
     @PostMapping("/token/get")
-    public HttpEntity<AuthTokenModel> getJWTToken(@RequestBody LoginDto dto, HttpServletResponse res) {
-        return ResponseEntity.ok(authService.getJwtToken(dto, res));
+    public HttpEntity<ApiResponse<String>> getJWTToken(@RequestBody LoginDto dto, HttpServletResponse res) {
+        ApiResponse<String> apiResponse = authService.login(dto, res);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
     @GetMapping("/token/check")

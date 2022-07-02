@@ -1,7 +1,7 @@
 package com.project.fastfoodapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.fastfoodapi.entity.enums.ClientStatus;
+import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -39,7 +39,7 @@ public class Human implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private ClientStatus status = ClientStatus.ACTIVE;
+    private HumanStatus status = HumanStatus.ACTIVE;
 
     @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -87,6 +87,6 @@ public class Human implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.status == ClientStatus.ACTIVE;
+        return this.status == HumanStatus.ACTIVE;
     }
 }
