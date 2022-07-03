@@ -29,7 +29,7 @@ public class HomeController {
             return ResponseEntity.notFound().build();
         }
         if (optionalHuman.get().getPhoto() == null) {
-            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/api/assets/image-not-found.png")).build();
+            return ResponseEntity.status(HttpStatus.FOUND).location(URI.create("/api/assets/no-image-human.png")).build();
         }
         Attachment photo = optionalHuman.get().getPhoto();
         return ResponseEntity.ok()

@@ -8,7 +8,10 @@ import com.project.fastfoodapi.entity.Human;
 import org.mapstruct.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
+import java.util.Properties;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {AttachmentMapper.class})
 public interface HumanMapper {
@@ -40,12 +43,16 @@ public interface HumanMapper {
 
     @AfterMapping
     default void url(@MappingTarget HumanFrontDto humanFrontDto, Human human) {
-        if (humanFrontDto.getPhoto() == null || human.getId() == null || human.getUserType() == null) {
+        if (humanFrontDto.getPhoto() == null) {
+            String server_start = System.getProperty("server_start");
             humanFrontDto.setPhoto(AttachmentDto.builder()
-                    .name("image-not-found")
-                    .size(6306L)
+                    .name("no-image")
+                    .size(60835L)
                     .type("image/png")
-                    .url("/api/assets/image-not-found.png")
+                    .url("/api/assets/no-image-human.png")
+                    .lastUpdated(server_start!=null?LocalDateTime.parse(server_start):
+                            LocalDateTime.MIN
+                    )
                     .build());
             return;
         }
