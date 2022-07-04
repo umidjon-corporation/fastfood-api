@@ -1,6 +1,7 @@
 package com.project.fastfoodapi.service;
 
 import com.project.fastfoodapi.dto.ApiResponse;
+import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
@@ -25,7 +26,10 @@ public class ClientService {
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
         }
-        human.setUserType(UserType.CLIENT);
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        if (!checkDto.isSuccess()){
+            return checkDto;
+        }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))
@@ -41,6 +45,10 @@ public class ClientService {
                     .message("Client with id=(" + id + ") not found")
                     .build();
         }
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        if (!checkDto.isSuccess()){
+            return checkDto;
+        }
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
         Human save = humanRepository.save(human);
@@ -49,6 +57,22 @@ public class ClientService {
                 .success(true)
                 .message("Edited!")
                 .build();
+    }
+
+    public ApiResponse<HumanFrontDto> checkDto(HumanDto dto){
+        if(dto.getPhoto()!=null){
+            if (dto.getPhoto().getOriginalFilename()==null || dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+                return ApiResponse.<HumanFrontDto>builder()
+                        .message("Photo type must be png, jpeg, ico, jpg")
+                        .build();
+            }
+        }
+        if (humanRepository.existsByNumber(dto.getNumber())) {
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message("Number of client already existed")
+                    .build();
+        }
+        return ApiResponse.<HumanFrontDto>builder().success(true).build();
     }
 
     public ApiResponse<?> delete(Long id) {

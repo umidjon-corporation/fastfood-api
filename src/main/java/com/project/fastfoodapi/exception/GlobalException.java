@@ -38,7 +38,10 @@ public class GlobalException {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest().body(ApiResponse.<Map<String, String>>builder()
+                        .message("Data validation error")
+                        .data(errors)
+                .build());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -61,7 +64,10 @@ public class GlobalException {
         } else {
             errors.put("message", e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
         }
-        return ResponseEntity.status(500).body(errors);
+        return ResponseEntity.status(400).body(ApiResponse.<Map<String, String>>builder()
+                        .message("Error data saving")
+                        .data(errors)
+                .build());
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

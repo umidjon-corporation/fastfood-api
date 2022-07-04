@@ -3,7 +3,6 @@ package com.project.fastfoodapi.service;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.ProductDto;
 import com.project.fastfoodapi.dto.front.ProductFrontDto;
-import com.project.fastfoodapi.entity.Attachment;
 import com.project.fastfoodapi.entity.Category;
 import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.mapper.ProductMapper;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,12 +23,12 @@ public class ProductService {
 
 
     public ApiResponse<ProductFrontDto> add(ProductDto dto) {
-        if (dto.getPhoto()==null || dto.getPhoto().isEmpty()) {
+        if (dto.getPhoto() == null || dto.getPhoto().isEmpty()) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo shouldn't be empty")
                     .build();
         }
-        if (!Objects.requireNonNull(dto.getPhoto().getOriginalFilename()).matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+        if (dto.getPhoto().getOriginalFilename() == null || dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
             return ApiResponse.<ProductFrontDto>builder()
                     .message("Photo type must be png, jpeg, ico, jpg")
                     .build();
@@ -56,8 +54,8 @@ public class ProductService {
                     .build();
         }
         Product product = optionalProduct.get();
-        if(dto.getPhoto()!=null && !dto.getPhoto().isEmpty()){
-            if (dto.getPhoto().getOriginalFilename()==null || !dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            if (dto.getPhoto().getOriginalFilename() == null || !dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
                 return ApiResponse.<ProductFrontDto>builder()
                         .message("Photo type must be png, jpeg, ico, jpg")
                         .build();

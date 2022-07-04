@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HumanRepository extends JpaRepository<Human, Long> {
+    boolean existsByNumber(String number);
+
     Optional<Human> findByStatusIsNotAndId(HumanStatus status, Long id);
 
     List<Human> findByUserTypeEquals(UserType userType);

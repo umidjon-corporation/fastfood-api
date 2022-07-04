@@ -3,13 +3,16 @@ package com.project.fastfoodapi.service;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
+import com.project.fastfoodapi.dto.front.ProductFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
+import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,6 +25,10 @@ public class EmployeeService {
         Human human = humanMapper.humanDtoToHuman(dto);
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
+        }
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        if(!checkDto.isSuccess()){
+            return checkDto;
         }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
@@ -38,6 +45,10 @@ public class EmployeeService {
                     .message(dto.getType().name() + " with id=(" + id + ") not found")
                     .build();
         }
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        if(!checkDto.isSuccess()){
+            return checkDto;
+        }
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
         if (dto.getStatus() == null) {
@@ -49,6 +60,27 @@ public class EmployeeService {
                 .success(true)
                 .message("Edited!")
                 .build();
+    }
+
+    public ApiResponse<HumanFrontDto> checkDto(EmployeeDto dto){
+        if (dto.getType() == UserType.CLIENT) {
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message("You can't save employee with user type client")
+                    .build();
+        }
+        if(dto.getPhoto()!=null){
+            if (dto.getPhoto().getOriginalFilename()==null || dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+                return ApiResponse.<HumanFrontDto>builder()
+                        .message("Photo type must be png, jpeg, ico, jpg")
+                        .build();
+            }
+        }
+        if (humanRepository.existsByNumber(dto.getNumber())) {
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message("Number of employee already existed")
+                    .build();
+        }
+        return ApiResponse.<HumanFrontDto>builder().success(true).build();
     }
 
     public ApiResponse<?> delete(Long id) {
