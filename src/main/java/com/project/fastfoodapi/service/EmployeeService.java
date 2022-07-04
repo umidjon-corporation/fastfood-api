@@ -26,7 +26,7 @@ public class EmployeeService {
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
         }
-        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto, "");
         if(!checkDto.isSuccess()){
             return checkDto;
         }
@@ -45,7 +45,7 @@ public class EmployeeService {
                     .message(dto.getType().name() + " with id=(" + id + ") not found")
                     .build();
         }
-        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto, optionalHuman.get().getNumber());
         if(!checkDto.isSuccess()){
             return checkDto;
         }
@@ -62,7 +62,7 @@ public class EmployeeService {
                 .build();
     }
 
-    public ApiResponse<HumanFrontDto> checkDto(EmployeeDto dto){
+    public ApiResponse<HumanFrontDto> checkDto(EmployeeDto dto, String oldNumber){
         if (dto.getType() == UserType.CLIENT) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("You can't save employee with user type client")
@@ -75,11 +75,13 @@ public class EmployeeService {
                         .build();
             }
         }
-        if (humanRepository.existsByNumber(dto.getNumber())) {
+
+        if (!dto.getNumber().equals(oldNumber) && humanRepository.existsByNumber(dto.getNumber())) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Number of employee already existed")
                     .build();
         }
+
         return ApiResponse.<HumanFrontDto>builder().success(true).build();
     }
 

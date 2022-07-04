@@ -26,7 +26,7 @@ public class ClientService {
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
         }
-        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto, "");
         if (!checkDto.isSuccess()){
             return checkDto;
         }
@@ -45,7 +45,7 @@ public class ClientService {
                     .message("Client with id=(" + id + ") not found")
                     .build();
         }
-        ApiResponse<HumanFrontDto> checkDto = checkDto(dto);
+        ApiResponse<HumanFrontDto> checkDto = checkDto(dto, optionalHuman.get().getNumber());
         if (!checkDto.isSuccess()){
             return checkDto;
         }
@@ -59,7 +59,7 @@ public class ClientService {
                 .build();
     }
 
-    public ApiResponse<HumanFrontDto> checkDto(HumanDto dto){
+    public ApiResponse<HumanFrontDto> checkDto(HumanDto dto, String oldNumber){
         if(dto.getPhoto()!=null){
             if (dto.getPhoto().getOriginalFilename()==null || dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
                 return ApiResponse.<HumanFrontDto>builder()
@@ -67,7 +67,8 @@ public class ClientService {
                         .build();
             }
         }
-        if (humanRepository.existsByNumber(dto.getNumber())) {
+
+        if (!dto.getNumber().equals(oldNumber) && humanRepository.existsByNumber(dto.getNumber())) {
             return ApiResponse.<HumanFrontDto>builder()
                     .message("Number of client already existed")
                     .build();
