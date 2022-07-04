@@ -2,6 +2,7 @@ package com.project.fastfoodapi.controller;
 
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
+import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -94,7 +95,14 @@ public class EmployeeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
-        ApiResponse<Object> apiResponse = employeeService.block(id);
+        ApiResponse<HumanFrontDto> apiResponse = employeeService.block(id);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}/unblock")
+    public HttpEntity<?> unblock(@PathVariable Long id) {
+        ApiResponse<HumanFrontDto> apiResponse = employeeService.unblock(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 }

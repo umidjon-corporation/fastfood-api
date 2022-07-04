@@ -90,18 +90,35 @@ public class ClientService {
                 .build();
     }
 
-    public ApiResponse<Object> block(Long id) {
+    public ApiResponse<HumanFrontDto> block(Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
-            return ApiResponse.builder()
+            return ApiResponse.<HumanFrontDto>builder()
                     .message("Client with id=(" + id + ") not found")
                     .build();
         }
         optionalHuman.get().setStatus(HumanStatus.BLOCKED);
         humanRepository.save(optionalHuman.get());
-        return ApiResponse.builder()
+        return ApiResponse.<HumanFrontDto>builder()
                 .success(true)
                 .message("Blocked!")
+                .data(humanMapper.humanToHumanFrontDto(optionalHuman.get()))
+                .build();
+    }
+
+    public ApiResponse<HumanFrontDto> unblock(Long id) {
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
+        if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() != UserType.CLIENT) {
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message("Client with id=(" + id + ") not found")
+                    .build();
+        }
+        optionalHuman.get().setStatus(HumanStatus.ACTIVE);
+        humanRepository.save(optionalHuman.get());
+        return ApiResponse.<HumanFrontDto>builder()
+                .success(true)
+                .message("Unblocked!")
+                .data(humanMapper.humanToHumanFrontDto(optionalHuman.get()))
                 .build();
     }
 }

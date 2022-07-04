@@ -65,7 +65,14 @@ public class ClientController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
-        ApiResponse<Object> apiResponse = clientService.block(id);
+        ApiResponse<HumanFrontDto> apiResponse = clientService.block(id);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}/unblock")
+    public HttpEntity<?> unblock(@PathVariable Long id) {
+        ApiResponse<HumanFrontDto> apiResponse = clientService.unblock(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 

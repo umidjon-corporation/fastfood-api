@@ -98,18 +98,33 @@ public class EmployeeService {
                 .build();
     }
 
-    public ApiResponse<Object> block(Long id) {
+    public ApiResponse<HumanFrontDto> block(Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty()) {
-            return ApiResponse.builder()
+            return ApiResponse.<HumanFrontDto>builder()
                     .message("Human with id=(" + id + ") not found")
                     .build();
         }
         optionalHuman.get().setStatus(HumanStatus.BLOCKED);
         humanRepository.save(optionalHuman.get());
-        return ApiResponse.builder()
+        return ApiResponse.<HumanFrontDto>builder()
                 .success(true)
                 .message("Blocked!")
+                .build();
+    }
+
+    public ApiResponse<HumanFrontDto> unblock(Long id) {
+        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
+        if (optionalHuman.isEmpty()) {
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message("Human with id=(" + id + ") not found")
+                    .build();
+        }
+        optionalHuman.get().setStatus(HumanStatus.ACTIVE);
+        humanRepository.save(optionalHuman.get());
+        return ApiResponse.<HumanFrontDto>builder()
+                .success(true)
+                .message("Unblocked!")
                 .build();
     }
 }
