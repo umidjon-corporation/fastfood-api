@@ -69,12 +69,4 @@ public class ClientController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @GetMapping("/me")
-    public HttpEntity<?> getMe(@AuthenticationPrincipal Human human) {
-        return ResponseEntity.ok().body(ApiResponse.<HumanFrontDto>builder()
-                .message("Success!")
-                .success(true)
-                .data(humanMapper.humanToHumanFrontDto(human))
-                .build());
-    }
 }
