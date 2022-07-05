@@ -69,7 +69,7 @@ public class EmployeeService {
                     .build();
         }
         if(dto.getPhoto()!=null){
-            if (dto.getPhoto().getOriginalFilename()==null || dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
+            if (dto.getPhoto().getOriginalFilename()==null || !dto.getPhoto().getOriginalFilename().matches("^(.+)\\.(png|jpeg|ico|jpg)$")) {
                 return ApiResponse.<HumanFrontDto>builder()
                         .message("Photo type must be png, jpeg, ico, jpg")
                         .build();
