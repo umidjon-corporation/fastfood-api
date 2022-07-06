@@ -70,7 +70,9 @@ public class OrderService {
         Optional<Branch> optionalBranch = branchRepository.findByIdAndActiveTrue(dto.getBranchId());
         optionalBranch.ifPresent(order::setBranch);
         //TODO calc delivery price
-        order.getDelivery().setPrice(BigDecimal.ZERO);
+        if(order.getDelivery()!=null){
+            order.getDelivery().setPrice(BigDecimal.ZERO);
+        }
         Order save = orderRepository.save(order);
         //TODO choose operator
         return ApiResponse.<OrderFrontDto>builder()
