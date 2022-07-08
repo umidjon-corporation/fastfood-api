@@ -1,6 +1,7 @@
 package com.project.fastfoodapi.controller;
 
 import com.project.fastfoodapi.dto.ApiResponse;
+import com.project.fastfoodapi.dto.PageableResponse;
 import com.project.fastfoodapi.dto.ProductDto;
 import com.project.fastfoodapi.dto.front.ProductFrontDto;
 import com.project.fastfoodapi.entity.Attachment;
@@ -31,12 +32,14 @@ public class ProductController {
 
     @GetMapping
     public HttpEntity<?> getAll(
-            @RequestParam(required = false) Long categoryId
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false, defaultValue = "") String q,
+            @RequestParam(required = false, defaultValue = "20") int size,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false) String[] sort,
+            @RequestParam(required = false, defaultValue = "ASC") String direction
     ) {
-        if(categoryId==null){
-            return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findByActiveTrue()));
-        }
-        return ResponseEntity.ok().body(productMapper.toFrontDto(productRepository.findAllByCategory_IdAndActiveTrue(categoryId)));
+       return productService.getAll(categoryId, q, sort, page, size, direction);
     }
 
     @GetMapping("/{id}")

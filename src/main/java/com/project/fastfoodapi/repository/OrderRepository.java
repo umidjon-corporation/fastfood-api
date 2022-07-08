@@ -4,11 +4,12 @@ import com.project.fastfoodapi.entity.Order;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
     List<Order> findByTimeIsBetween(LocalDateTime from, LocalDateTime to, Pageable pageable);
 
     List<Order> findByDelivery_Courier_IdAndTimeIsBetween(Long id, LocalDateTime timeStart, LocalDateTime timeEnd);

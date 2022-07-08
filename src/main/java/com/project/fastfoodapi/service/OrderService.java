@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.OrderDto;
-import com.project.fastfoodapi.dto.front.DeliveryFrontDto;
-import com.project.fastfoodapi.dto.front.GroupedDataDto;
-import com.project.fastfoodapi.dto.front.HumanFrontDto;
-import com.project.fastfoodapi.dto.front.OrderFrontDto;
+import com.project.fastfoodapi.dto.PageableResponse;
+import com.project.fastfoodapi.dto.front.*;
 import com.project.fastfoodapi.entity.*;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.OrderStatus;
@@ -19,10 +17,13 @@ import com.project.fastfoodapi.repository.BranchRepository;
 import com.project.fastfoodapi.repository.HumanRepository;
 import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
+import com.project.fastfoodapi.specification.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -54,7 +56,7 @@ public class OrderService {
         double all = 0;
         for (OrderProduct orderProduct : order.getProducts()) {
             Optional<Product> optionalProduct = productRepository.findById(orderProduct.getProduct().getId());
-            if (optionalProduct.isEmpty()) {
+            if (optionalProduct.isEmpty() || orderProduct.getCount()==null) {
                 continue;
             }
             orderProduct.setProduct(optionalProduct.get());
@@ -203,6 +205,55 @@ public class OrderService {
         }
 
         return orderMapper.orderToOrderFrontDto(all);
+    }
+
+    public PageableResponse<OrderFrontDto> getAll2(String status, Long branch, boolean delivery, int size, int page, boolean desc, String[] sort){
+        SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
+        List<FilterRequest> filterRequests=new ArrayList<>();
+        List<SortRequest> sortRequests=new ArrayList<>();
+        if(branch!=null){
+            filterRequests.add(FilterRequest.builder()
+                    .operator(Operator.EQUAL)
+                    .value(branch)
+                    .fieldType(FieldType.LONG)
+                    .key("branch.id")
+                    .build());
+        }
+        if(status!=null){
+            filterRequests.add(FilterRequest.builder()
+                    .key("status")
+                    .operator(Operator.EQUAL)
+                    .value(status)
+                    .fieldType(FieldType.STRING)
+                    .build());
+        }
+        if(sort!=null){
+            for (String s : sort) {
+                sortRequests.add(SortRequest.builder()
+                        .key(s)
+                        .direction( desc?SortDirection.DESC:SortDirection.ASC)
+                        .build());
+            }
+        }
+        if(delivery){
+            filterRequests.add(FilterRequest.builder()
+                            .key("delivery")
+                            .value(null)
+                            .operator(Operator.NOT_EQUAL)
+                    .build());
+        }
+        searchRequest.filters(filterRequests);
+        searchRequest.sorts(sortRequests);
+        Page<Order> orderPage = orderRepository.findAll(
+                new EntitySpecification<>(searchRequest.build()),
+                EntitySpecification.getPageable(page, size)
+        );
+        return PageableResponse.<OrderFrontDto>builder()
+                .content(orderMapper.orderToOrderFrontDto(orderPage.getContent()))
+                .currentPage(orderPage.getNumber())
+                .totalPages(orderPage.getTotalPages())
+                .totalItems(orderPage.getTotalElements())
+                .build();
     }
 
     public List<OrderFrontDto> getAllToday(String status, Long branch, Boolean delivery, Integer size, Integer page, boolean desc) {

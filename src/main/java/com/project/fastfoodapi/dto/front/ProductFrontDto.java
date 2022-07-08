@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductFrontDto {
+    private Long id;
     private String nameUz, nameRu, description;
     private AttachmentDto photo;
     private BigDecimal price;
     private Category category;
-    private Long id;
 }
