@@ -24,13 +24,21 @@ public class CategoryController {
     final CategoryRepository categoryRepository;
 
     @GetMapping
-    public HttpEntity<?> getAll() {
-        return ResponseEntity.ok().body(categoryRepository.findByActiveIsTrue());
+    public HttpEntity<?> getAll(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String[] sort,
+            @RequestParam(required = false) boolean desc,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "100") int size
+    ) {
+        return ResponseEntity.ok().body(categoryService.getAll(q, sort, desc, page, size));
     }
 
     @GetMapping("/{id}")
-    public HttpEntity<?> getOneCategory(@PathVariable Long id,
-                                        @RequestParam(required = false, defaultValue = "false") boolean children) {
+    public HttpEntity<?> getOneCategory(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "false") boolean children
+    ) {
         Optional<Category> optionalCategory = categoryRepository.findByIdAndActiveTrue(id);
         if (optionalCategory.isEmpty()) {
             return ResponseEntity.notFound().build();

@@ -21,8 +21,14 @@ public class BranchController {
     final BranchRepository branchRepository;
 
     @GetMapping
-    public HttpEntity<?> getAll() {
-        return ResponseEntity.ok().body(branchRepository.findByActiveTrue());
+    public HttpEntity<?> getAll(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(required = false, defaultValue = "false") boolean desc,
+            @RequestParam(required = false) String[] sort,
+            @RequestParam(required = false) String q
+    ) {
+        return ResponseEntity.ok().body(branchService.getAll(page, size, q, sort, desc));
     }
 
     @GetMapping("/{id}")

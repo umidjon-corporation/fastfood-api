@@ -37,9 +37,9 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "20") int size,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) String[] sort,
-            @RequestParam(required = false, defaultValue = "ASC") String direction
+            @RequestParam(required = false, defaultValue = "false") boolean desc
     ) {
-       return productService.getAll(categoryId, q, sort, page, size, direction);
+       return productService.getAll(categoryId, q, sort, page, size, desc);
     }
 
     @GetMapping("/{id}")

@@ -13,7 +13,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class EntitySpecification<T> implements Specification<T> {
 
-    private final SearchRequest request;
+
+    private final transient SearchRequest request;
 
     public static Pageable getPageable(Integer page, Integer size) {
         return PageRequest.of(Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 100));
@@ -43,11 +44,13 @@ public class EntitySpecification<T> implements Specification<T> {
         Predicate predicate = cb.equal(cb.literal(Boolean.TRUE), Boolean.TRUE);
 
         for (FilterRequest filter : this.request.getFilters()) {
+            if(filter==null)continue;
             predicate = filter.getOperator().build(root, cb, filter, predicate);
         }
 
         List<Order> orders = new ArrayList<>();
         for (SortRequest sort : this.request.getSorts()) {
+            if(sort==null)continue;
             orders.add(sort.getDirection().build(root, cb, sort));
         }
 

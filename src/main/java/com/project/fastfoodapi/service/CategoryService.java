@@ -3,12 +3,17 @@ package com.project.fastfoodapi.service;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.CategoryChildrenDto;
 import com.project.fastfoodapi.dto.CategoryDto;
+import com.project.fastfoodapi.dto.PageableResponse;
 import com.project.fastfoodapi.entity.Category;
 import com.project.fastfoodapi.entity.Product;
 import com.project.fastfoodapi.mapper.CategoryMapper;
 import com.project.fastfoodapi.repository.CategoryRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
+import com.project.fastfoodapi.specification.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -136,5 +141,52 @@ public class CategoryService {
             result.getChildren().add(getChildren(child));
         }
         return result;
+    }
+
+    public PageableResponse<Category> getAll(String q, String[] sort, boolean desc, int page, int size){
+        SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
+        List<FilterRequest> filterRequests=new ArrayList<>();
+        filterRequests.add(FilterRequest.builder()
+                        .key("active")
+                        .operator(Operator.EQUAL)
+                        .value(true)
+                        .fieldType(FieldType.BOOLEAN)
+                .build());
+        if(q!=null && !q.equals("")){
+            filterRequests.add(FilterRequest.builder()
+                            .operator(Operator.LIKE)
+                            .value(q)
+                            .key("nameUz")
+                            .fieldType(FieldType.STRING)
+                    .build());
+            filterRequests.add(FilterRequest.builder()
+                    .operator(Operator.LIKE)
+                    .value(q)
+                    .or(true)
+                    .fieldType(FieldType.STRING)
+                    .key("nameRu")
+                    .build());
+        }
+        searchRequest.filters(filterRequests);
+        if(sort!=null){
+            List<SortRequest> sortRequests=new ArrayList<>();
+            for (String s : sort) {
+                sortRequests.add(SortRequest.builder()
+                                .key(s)
+                                .direction(desc?SortDirection.DESC:SortDirection.ASC)
+                        .build());
+            }
+            searchRequest.sorts(sortRequests);
+        }
+        Page<Category> all = categoryRepository.findAll(
+                new EntitySpecification<>(searchRequest.build()),
+                EntitySpecification.getPageable(page, size)
+        );
+        return PageableResponse.<Category>builder()
+                        .totalPages(all.getTotalPages())
+                        .currentPage(all.getNumber())
+                        .totalItems(all.getTotalElements())
+                        .content(all.getContent())
+                .build();
     }
 }

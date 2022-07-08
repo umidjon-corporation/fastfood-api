@@ -107,11 +107,17 @@ public class ProductService {
                 .build();
     }
 
-    public ResponseEntity<?> getAll(Long categoryId, String q, String[] sort, int page, int size, String direction){
+    public ResponseEntity<?> getAll(Long categoryId, String q, String[] sort, int page, int size, boolean desc){
         SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
         List<FilterRequest> filterRequests=new ArrayList<>();
         List<SortRequest> sortRequests=new ArrayList<>();
-        if(categoryId!=null){
+        filterRequests.add(FilterRequest.builder()
+                        .key("active")
+                        .value(true)
+                        .operator(Operator.EQUAL)
+                        .fieldType(FieldType.BOOLEAN)
+                .build());
+        if(categoryId!=null) {
             filterRequests.add(FilterRequest.builder()
                     .operator(Operator.EQUAL)
                     .value(categoryId)
@@ -130,11 +136,13 @@ public class ProductService {
                     .key("nameRu")
                     .operator(Operator.LIKE)
                     .value(q)
+                    .or(true)
                     .fieldType(FieldType.STRING)
                     .build());
             filterRequests.add(FilterRequest.builder()
                     .key("description")
                     .operator(Operator.LIKE)
+                    .or(true)
                     .value(q)
                     .fieldType(FieldType.STRING)
                     .build());
@@ -143,16 +151,16 @@ public class ProductService {
             for (String s : sort) {
                 sortRequests.add(SortRequest.builder()
                                 .key(s)
-                                .direction(direction.equalsIgnoreCase("desc")?SortDirection.DESC:SortDirection.ASC)
+                                .direction(desc?SortDirection.DESC:SortDirection.ASC)
                         .build());
             }
         }
-        searchRequest.filters(filterRequests);
         searchRequest.sorts(sortRequests);
+        searchRequest.filters(filterRequests);
+        Specification<Product> specification = new EntitySpecification<>(searchRequest.build());
         Page<Product> productPage = productRepository.findAll(
-                new EntitySpecification<>(searchRequest.build()),
-                EntitySpecification.getPageable(page, size)
-                );
+                specification,
+                EntitySpecification.getPageable(page, size));
         return ResponseEntity.ok().body(PageableResponse.<ProductFrontDto>builder()
                         .content(productMapper.toFrontDto(productPage.getContent()))
                         .currentPage(productPage.getNumber())

@@ -29,4 +29,6 @@ public class FilterRequest {
     private transient Object valueTo;
 
     private transient List<Object> values;
+    @Builder.Default
+    private boolean or=false;
 }
