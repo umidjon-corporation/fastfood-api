@@ -21,8 +21,7 @@ public enum FieldType {
         public Object parse(String value) {
             Object date = null;
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-                date = LocalDateTime.parse(value, formatter);
+                date = LocalDateTime.parse(value);
             } catch (Exception ignored) {}
 
             return date;
@@ -51,7 +50,13 @@ public enum FieldType {
         public Object parse(String value) {
             return value;
         }
-    };
+    },
+    OBJECT{
+        public Object parse(String value) {
+            return value;
+        }
+    }
+    ;
 
     public abstract Object parse(String value);
 

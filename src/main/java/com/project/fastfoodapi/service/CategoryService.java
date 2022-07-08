@@ -146,12 +146,6 @@ public class CategoryService {
     public PageableResponse<Category> getAll(String q, String[] sort, boolean desc, int page, int size){
         SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
         List<FilterRequest> filterRequests=new ArrayList<>();
-        filterRequests.add(FilterRequest.builder()
-                        .key("active")
-                        .operator(Operator.EQUAL)
-                        .value(true)
-                        .fieldType(FieldType.BOOLEAN)
-                .build());
         if(q!=null && !q.equals("")){
             filterRequests.add(FilterRequest.builder()
                             .operator(Operator.LIKE)
@@ -167,7 +161,6 @@ public class CategoryService {
                     .key("nameRu")
                     .build());
         }
-        searchRequest.filters(filterRequests);
         if(sort!=null){
             List<SortRequest> sortRequests=new ArrayList<>();
             for (String s : sort) {
@@ -179,7 +172,8 @@ public class CategoryService {
             searchRequest.sorts(sortRequests);
         }
         Page<Category> all = categoryRepository.findAll(
-                new EntitySpecification<>(searchRequest.build()),
+                new EntitySpecification<Category>(searchRequest.filters(List.of(FilterRequest.isActiveDefault())).build())
+                        .and(new EntitySpecification<>(searchRequest.filters(filterRequests).build())),
                 EntitySpecification.getPageable(page, size)
         );
         return PageableResponse.<Category>builder()

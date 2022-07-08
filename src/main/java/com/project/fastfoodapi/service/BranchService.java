@@ -4,6 +4,7 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.BranchDto;
 import com.project.fastfoodapi.dto.PageableResponse;
 import com.project.fastfoodapi.entity.Branch;
+import com.project.fastfoodapi.entity.Category;
 import com.project.fastfoodapi.mapper.BranchMapper;
 import com.project.fastfoodapi.repository.BranchRepository;
 import com.project.fastfoodapi.specification.*;
@@ -64,7 +65,7 @@ public class BranchService {
     }
 
     public PageableResponse<Branch> getAll(int page, int size, String q, String[] sort, boolean desc){
-        SearchRequest.SearchRequestBuilder builder = SearchRequest.builder();
+        SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
         List<FilterRequest> filterRequests=new ArrayList<>();
         List<SortRequest> sortRequests=new ArrayList<>();
         if(q!=null && !q.equals("")){
@@ -96,16 +97,12 @@ public class BranchService {
                                 .direction(desc?SortDirection.DESC:SortDirection.ASC)
                         .build());
             }
+            searchRequest.sorts(sortRequests);
         }
 
         Page<Branch> all = branchRepository.findAll(
-                new EntitySpecification<Branch>(builder.filters(List.of(FilterRequest.builder()
-                        .fieldType(FieldType.BOOLEAN)
-                        .key("active")
-                        .value(true)
-                        .operator(Operator.EQUAL)
-                        .build())).sorts(sortRequests).build()).and(
-                                new EntitySpecification<>(builder.filters(filterRequests).build())),
+                new EntitySpecification<Branch>(searchRequest.filters(List.of(FilterRequest.isActiveDefault())).build())
+                        .and(new EntitySpecification<>(searchRequest.filters(filterRequests).build())),
                 EntitySpecification.getPageable(page, size)
         );
         return PageableResponse.<Branch>builder()

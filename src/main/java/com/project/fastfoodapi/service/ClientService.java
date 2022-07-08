@@ -1,17 +1,21 @@
 package com.project.fastfoodapi.service;
 
 import com.project.fastfoodapi.dto.ApiResponse;
-import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.dto.HumanDto;
+import com.project.fastfoodapi.dto.PageableResponse;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.HumanMapper;
 import com.project.fastfoodapi.repository.HumanRepository;
+import com.project.fastfoodapi.specification.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -121,5 +125,59 @@ public class ClientService {
                 .message("Unblocked!")
                 .data(humanMapper.humanToHumanFrontDto(optionalHuman.get()))
                 .build();
+    }
+
+    public PageableResponse<HumanFrontDto> getAll(int page, int size, String q, String[] sort, boolean desc, String status){
+        SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
+        List<FilterRequest> filterRequests=new ArrayList<>();
+        List<SortRequest> sortRequests=new ArrayList<>();
+        if(q!=null && !q.equals("")){
+            filterRequests.add(FilterRequest.builder()
+                    .operator(Operator.LIKE)
+                    .value(q)
+                    .key("name")
+                    .fieldType(FieldType.STRING)
+                    .build());
+            filterRequests.add(FilterRequest.builder()
+                    .operator(Operator.LIKE)
+                    .value(q)
+                    .or(true)
+                    .fieldType(FieldType.STRING)
+                    .key("number")
+                    .build());
+        }
+        if(sort!=null){
+            for (String s : sort) {
+                sortRequests.add(SortRequest.builder()
+                        .key(s)
+                        .direction(desc?SortDirection.DESC:SortDirection.ASC)
+                        .build());
+            }
+            searchRequest.sorts(sortRequests);
+        }
+        List<FilterRequest> requiredFilters=new ArrayList<>();
+
+        if(status!=null && (status.equalsIgnoreCase("blocked") || status.equalsIgnoreCase("active"))){
+            requiredFilters.add(FilterRequest.builder()
+                            .key("status")
+                            .value(status.equalsIgnoreCase("blocked")?HumanStatus.BLOCKED:HumanStatus.ACTIVE)
+                            .operator(Operator.EQUAL)
+                            .fieldType(FieldType.OBJECT)
+                    .build());
+        }else {
+            requiredFilters.add( FilterRequest.builder()
+                    .fieldType(FieldType.OBJECT)
+                    .value(HumanStatus.DELETED)
+                    .key("status")
+                    .operator(Operator.NOT_EQUAL)
+                    .build());
+        }
+
+        Page<Human> all = humanRepository.findAll(
+                new EntitySpecification<Human>(searchRequest.filters(requiredFilters).build())
+                        .and(new EntitySpecification<>(searchRequest.filters(filterRequests).build())),
+                EntitySpecification.getPageable(page, size)
+        );
+        return PageableResponse.parsePage(all, humanMapper.humanToHumanFrontDto(all.getContent()));
     }
 }

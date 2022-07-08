@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -28,7 +29,17 @@ public class FilterRequest {
 
     private transient Object valueTo;
 
-    private transient List<Object> values;
+    private transient Collection<Object> values;
+
     @Builder.Default
     private boolean or=false;
+
+    public static FilterRequest isActiveDefault(){
+        return FilterRequest.builder()
+                .key("active")
+                .value(true)
+                .fieldType(FieldType.BOOLEAN)
+                .operator(Operator.EQUAL)
+                .build();
+    }
 }

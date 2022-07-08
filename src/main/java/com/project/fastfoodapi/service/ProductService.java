@@ -111,12 +111,6 @@ public class ProductService {
         SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
         List<FilterRequest> filterRequests=new ArrayList<>();
         List<SortRequest> sortRequests=new ArrayList<>();
-        filterRequests.add(FilterRequest.builder()
-                        .key("active")
-                        .value(true)
-                        .operator(Operator.EQUAL)
-                        .fieldType(FieldType.BOOLEAN)
-                .build());
         if(categoryId!=null) {
             filterRequests.add(FilterRequest.builder()
                     .operator(Operator.EQUAL)
@@ -156,10 +150,9 @@ public class ProductService {
             }
         }
         searchRequest.sorts(sortRequests);
-        searchRequest.filters(filterRequests);
-        Specification<Product> specification = new EntitySpecification<>(searchRequest.build());
         Page<Product> productPage = productRepository.findAll(
-                specification,
+                new EntitySpecification<Product>(searchRequest.filters(List.of(FilterRequest.isActiveDefault())).build())
+                        .and(new EntitySpecification<>(searchRequest.filters(filterRequests).build())),
                 EntitySpecification.getPageable(page, size));
         return ResponseEntity.ok().body(PageableResponse.<ProductFrontDto>builder()
                         .content(productMapper.toFrontDto(productPage.getContent()))

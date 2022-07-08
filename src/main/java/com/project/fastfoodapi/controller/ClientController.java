@@ -28,12 +28,15 @@ public class ClientController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public HttpEntity<?> getAll() {
-        return ResponseEntity.ok().body(
-                humanMapper.humanToHumanFrontDto(
-                        humanRepository.findByUserTypeEqualsAndStatusIsNot(UserType.CLIENT, HumanStatus.DELETED)
-                )
-        );
+    public HttpEntity<?> getAll(
+            @RequestParam(required = false) boolean desc,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String[] sort,
+            @RequestParam(required = false) String status
+    ) {
+        return ResponseEntity.ok().body(clientService.getAll(page, size, q, sort, desc, status));
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

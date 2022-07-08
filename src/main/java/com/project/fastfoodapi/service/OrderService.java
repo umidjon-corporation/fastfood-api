@@ -1,7 +1,5 @@
 package com.project.fastfoodapi.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.OrderDto;
 import com.project.fastfoodapi.dto.PageableResponse;
@@ -23,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,7 +29,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -170,47 +166,40 @@ public class OrderService {
                 .build();
     }
 
-    public List<OrderFrontDto> getAll(String status, Long branch, Boolean delivery, Integer size, Integer page, boolean desc) {
-        List<Order> all;
-        OrderStatus orderStatus = null;
-        Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
-        try {
-            orderStatus = OrderStatus.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException ignore) {
-        }
-        if (orderStatus == null && branch == null && delivery == null) {
-            return orderMapper.orderToOrderFrontDto(orderRepository.findAll(pageable).getContent());
-        }
-        if (delivery == null) {
-            if (branch == null) {
-                all = orderRepository.findByOrderStatus(orderStatus, pageable);
-            } else {
-                all = orderRepository.findByOrderStatusAndBranch_Id(orderStatus, branch, pageable);
-            }
-        } else {
-            if (delivery) {
-                if (branch == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNull(orderStatus, pageable);
-                } else {
-                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNull(orderStatus, branch, pageable);
-                }
-            } else {
-                if (branch == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNull(orderStatus, pageable);
-                } else {
-                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNull(orderStatus, branch, pageable);
-                }
-            }
-
-        }
-
-        return orderMapper.orderToOrderFrontDto(all);
-    }
-
-    public PageableResponse<OrderFrontDto> getAll2(String status, Long branch, boolean delivery, int size, int page, boolean desc, String[] sort){
+    public PageableResponse<OrderFrontDto> getAll(String status, Long branch, Boolean delivery, int size, int page, boolean desc, String[] sort){
         SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
         List<FilterRequest> filterRequests=new ArrayList<>();
         List<SortRequest> sortRequests=new ArrayList<>();
+        defaultOrderFilter(status, branch, delivery, desc, sort, searchRequest, filterRequests, sortRequests);
+        Page<Order> orderPage = orderRepository.findAll(
+                new EntitySpecification<>(searchRequest.filters(filterRequests).build()),
+                EntitySpecification.getPageable(page, size)
+        );
+        return PageableResponse.parsePage(orderPage, orderMapper.orderToOrderFrontDto(orderPage.getContent()));
+    }
+
+    public PageableResponse<OrderFrontDto> getAllToday(String status, Long branch, Boolean delivery, int size, int page, boolean desc, String[] sort){
+        SearchRequest.SearchRequestBuilder searchRequest = SearchRequest.builder();
+        List<FilterRequest> filterRequests=new ArrayList<>();
+        List<SortRequest> sortRequests=new ArrayList<>();
+        LocalDateTime from=LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime to=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        filterRequests.add(FilterRequest.builder()
+                        .key("time")
+                        .value(from.toString())
+                        .valueTo(to.toString())
+                        .fieldType(FieldType.DATE)
+                        .operator(Operator.BETWEEN)
+                .build());
+        defaultOrderFilter(status, branch, delivery, desc, sort, searchRequest, filterRequests, sortRequests);
+        Page<Order> orderPage = orderRepository.findAll(
+                new EntitySpecification<>(searchRequest.filters(filterRequests).build()),
+                EntitySpecification.getPageable(page, size)
+        );
+        return PageableResponse.parsePage(orderPage, orderMapper.orderToOrderFrontDto(orderPage.getContent()));
+    }
+
+    private void defaultOrderFilter(String status, Long branch, Boolean delivery, boolean desc, String[] sort, SearchRequest.SearchRequestBuilder searchRequest, List<FilterRequest> filterRequests, List<SortRequest> sortRequests) {
         if(branch!=null){
             filterRequests.add(FilterRequest.builder()
                     .operator(Operator.EQUAL)
@@ -219,81 +208,35 @@ public class OrderService {
                     .key("branch.id")
                     .build());
         }
-        if(status!=null){
-            filterRequests.add(FilterRequest.builder()
-                    .key("status")
-                    .operator(Operator.EQUAL)
-                    .value(status)
-                    .fieldType(FieldType.STRING)
-                    .build());
+        if(status != null) {
+            try {
+                OrderStatus.valueOf(status.toUpperCase());
+                filterRequests.add(FilterRequest.builder()
+                        .key("orderStatus")
+                        .operator(Operator.EQUAL)
+                        .value(OrderStatus.valueOf(status.toUpperCase()))
+                        .fieldType(FieldType.OBJECT)
+                        .build());
+            }catch (Exception ignore){}
+
         }
         if(sort!=null){
             for (String s : sort) {
                 sortRequests.add(SortRequest.builder()
                         .key(s)
-                        .direction( desc?SortDirection.DESC:SortDirection.ASC)
+                        .direction(desc?SortDirection.DESC:SortDirection.ASC)
                         .build());
             }
         }
-        if(delivery){
+        if(delivery!=null){
             filterRequests.add(FilterRequest.builder()
-                            .key("delivery")
-                            .value(null)
-                            .operator(Operator.NOT_EQUAL)
+                    .key("delivery")
+                    .value(null)
+                    .fieldType(FieldType.OBJECT)
+                    .operator(delivery?Operator.NOT_EQUAL:Operator.EQUAL)
                     .build());
         }
-        searchRequest.filters(filterRequests);
         searchRequest.sorts(sortRequests);
-        Page<Order> orderPage = orderRepository.findAll(
-                new EntitySpecification<>(searchRequest.build()),
-                EntitySpecification.getPageable(page, size)
-        );
-        return PageableResponse.<OrderFrontDto>builder()
-                .content(orderMapper.orderToOrderFrontDto(orderPage.getContent()))
-                .currentPage(orderPage.getNumber())
-                .totalPages(orderPage.getTotalPages())
-                .totalItems(orderPage.getTotalElements())
-                .build();
-    }
-
-    public List<OrderFrontDto> getAllToday(String status, Long branch, Boolean delivery, Integer size, Integer page, boolean desc) {
-        List<Order> all;
-        OrderStatus orderStatus = null;
-        Pageable pageable=getPageable(page, size, desc?Sort.Direction.DESC: Sort.Direction.ASC, "time", "id");
-        LocalDateTime from=LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
-        LocalDateTime to=LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
-        try {
-            orderStatus = OrderStatus.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException ignore) {
-        }
-        if (orderStatus == null && branch == null && delivery == null) {
-            return orderMapper.orderToOrderFrontDto(orderRepository.findByTimeIsBetween(from ,to, pageable));
-        }
-        if (delivery == null) {
-            if (branch == null) {
-                all = orderRepository.findByOrderStatusAndTimeIsBetween(orderStatus, from, to, pageable);
-            } else {
-                all = orderRepository.findByOrderStatusAndBranch_IdAndTimeIsBetween(orderStatus, branch, from, to, pageable);
-            }
-        } else {
-            if (delivery) {
-                if (branch == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNotNullAndTimeIsBetween(orderStatus, from, to, pageable);
-                } else {
-                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNotNullAndTimeIsBetween(orderStatus, branch, from, to, pageable);
-                }
-            } else {
-                if (branch == null) {
-                    all = orderRepository.findByOrderStatusAndDelivery_Courier_idIsNullAndTimeIsBetween(orderStatus, from, to, pageable);
-                } else {
-                    all = orderRepository.findByOrderStatusAndBranch_IdAndDelivery_Courier_IdIsNullAndTimeIsBetween(orderStatus, branch, from, to, pageable);
-                }
-            }
-
-        }
-        Gson gson=new GsonBuilder().setPrettyPrinting().create();
-        System.out.println(all);
-        return orderMapper.orderToOrderFrontDto(all);
     }
 
     public Pageable getPageable(int page, int size, Sort.Direction sort, String... properties){

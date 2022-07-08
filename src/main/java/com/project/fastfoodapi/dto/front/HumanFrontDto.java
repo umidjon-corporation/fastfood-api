@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class HumanFrontDto {
+    private Long id;
     private String name;
     private String number;
     private HumanStatus status;
@@ -23,5 +24,4 @@ public class HumanFrontDto {
     private Language lang;
     private UserType type;
     private AttachmentDto photo;
-    private Long id;
 }

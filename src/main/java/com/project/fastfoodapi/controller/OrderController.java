@@ -39,7 +39,7 @@ public class OrderController {
                                 @RequestParam(required = false) boolean desc,
                                 @RequestParam(required = false) String[] sort
     ) {
-        return ResponseEntity.ok().body(orderService.getAll2(status, branch, delivery, size, page, desc, sort));
+        return ResponseEntity.ok().body(orderService.getAll(status, branch, delivery, size, page, desc, sort));
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'COURIER')")
@@ -68,11 +68,11 @@ public class OrderController {
                                   @RequestParam(required = false) Long branch,
                                   @RequestParam(required = false) Boolean delivery,
                                   @RequestParam(required = false, defaultValue = "0") Integer page,
-                                  @RequestParam(required = false, defaultValue = "40") Integer size,
-                                  @RequestParam(required = false) boolean desc
-
+                                  @RequestParam(required = false, defaultValue = "50") Integer size,
+                                  @RequestParam(required = false) boolean desc,
+                                  @RequestParam(required = false) String[] sort
     ) {
-        return ResponseEntity.ok().body(orderService.getAllToday(status, branch, delivery, size, page, desc));
+        return ResponseEntity.ok().body(orderService.getAllToday(status, branch, delivery, size, page, desc, sort));
     }
 
     @GetMapping("/{id}")

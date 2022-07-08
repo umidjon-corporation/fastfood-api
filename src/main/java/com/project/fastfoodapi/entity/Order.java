@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "orders")
 public class Order {
     @Id
