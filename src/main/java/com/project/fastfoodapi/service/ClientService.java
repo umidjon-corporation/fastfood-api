@@ -157,13 +157,21 @@ public class ClientService {
         }
         List<FilterRequest> requiredFilters=new ArrayList<>();
 
+        requiredFilters.add(FilterRequest.builder()
+                .key("userType")
+                .value(UserType.CLIENT)
+                .operator(Operator.EQUAL)
+                .fieldType(FieldType.OBJECT)
+                .build());
+
         if(status!=null && (status.equalsIgnoreCase("blocked") || status.equalsIgnoreCase("active"))){
             requiredFilters.add(FilterRequest.builder()
-                            .key("status")
-                            .value(status.equalsIgnoreCase("blocked")?HumanStatus.BLOCKED:HumanStatus.ACTIVE)
-                            .operator(Operator.EQUAL)
-                            .fieldType(FieldType.OBJECT)
+                    .key("status")
+                    .value(status.equalsIgnoreCase("active")?HumanStatus.ACTIVE:HumanStatus.BLOCKED)
+                    .operator(Operator.EQUAL)
+                    .fieldType(FieldType.OBJECT)
                     .build());
+
         }else {
             requiredFilters.add( FilterRequest.builder()
                     .fieldType(FieldType.OBJECT)
