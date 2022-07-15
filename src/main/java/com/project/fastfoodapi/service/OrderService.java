@@ -17,6 +17,7 @@ import com.project.fastfoodapi.repository.OrderRepository;
 import com.project.fastfoodapi.repository.ProductRepository;
 import com.project.fastfoodapi.specification.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -147,12 +149,16 @@ public class OrderService {
                 .build();
     }
 
-    public ApiResponse<DeliveryFrontDto> getDelivery(Long id) {
+    @SneakyThrows
+    public ApiResponse<DeliveryFrontDto> getDelivery(Long id, Human human) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isEmpty()) {
             return ApiResponse.<DeliveryFrontDto>builder()
                     .message("Order with id=(" + id + ") not found")
                     .build();
+        }
+        if(human.getUserType()==UserType.CLIENT && !optionalOrder.get().getClient().getId().equals(human.getId())){
+            throw new AccessDeniedException("Not access for this information");
         }
         if (optionalOrder.get().getDelivery() == null) {
             return ApiResponse.<DeliveryFrontDto>builder()

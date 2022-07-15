@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -35,6 +36,9 @@ public class Human implements UserDetails {
 
     @JsonIgnore
     private String password;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    private List<Setting> settings;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

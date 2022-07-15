@@ -46,6 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(req, res);
             if (res.getStatus() == 401) {
+                res.setContentType("application/json");
                 res.getWriter().write(gson.toJson(tokenClaims));
             }
         } catch (AccessDeniedException | NestedServletException e) {

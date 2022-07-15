@@ -14,4 +14,8 @@ public class ApiResponse<T>{
     @Builder.Default
     private boolean success=false;
     private T data;
+
+    public boolean isFailed(){
+        return !success;
+    }
 }

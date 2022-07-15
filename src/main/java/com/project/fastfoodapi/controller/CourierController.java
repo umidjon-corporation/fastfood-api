@@ -15,6 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/courier")
 public class CourierController {
     final HumanRepository humanRepository;
     final HumanMapper humanMapper;
@@ -32,7 +34,7 @@ public class CourierController {
     final OrderMapper orderMapper;
     final CourierService courierService;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CUORIER')")
     @GetMapping("/{number}")
     public HttpEntity<?> getSelf(@PathVariable String number) {
         Optional<Human> optionalHuman = humanRepository.findByNumber(number);
@@ -42,35 +44,18 @@ public class CourierController {
         return ResponseEntity.ok().body(humanMapper.humanToHumanFrontDto(optionalHuman.get()));
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CUORIER')")
     @GetMapping("/{id}/orders")
     public HttpEntity<?> getOrders(
             @PathVariable Long id,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "50") int size,
+            @RequestParam(required = false) boolean desc,
+            @RequestParam(required = false) String[] sort
     ) {
-        Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
-        if (optionalHuman.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (from == null && to == null) {
-            return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(orderRepository.findByDelivery_Courier_Id(id)));
-        } else if (from != null && to != null) {
-            return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(
-                    orderRepository.findByDelivery_Courier_IdAndTimeIsBetween(id,
-                            LocalDateTime.of(from, LocalTime.parse("00:00")),
-                            LocalDateTime.of(to, LocalTime.parse("23:59")))
-            ));
-        }
-        if (from != null) {
-            return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(
-                    orderRepository.findByDelivery_Courier_IdAndTimeIsBetween(id,
-                            LocalDateTime.of(from, LocalTime.parse("00:00")), LocalDateTime.now())
-            ));
-        }
-        return ResponseEntity.ok().body(orderMapper.orderToOrderFrontDto(
-                orderRepository.findByDelivery_Courier_Id(id)
-        ));
+        return courierService.getOrders(id, from, to, page, size, sort, desc);
     }
 
     @PutMapping("/{id}/photo")
@@ -79,10 +64,10 @@ public class CourierController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'COURIER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CUORIER')")
     @PutMapping("/{id}")
-    public HttpEntity<?> editData(@PathVariable Long id, @RequestBody CourierEditDto dto) {
-        ApiResponse<HumanFrontDto> apiResponse = courierService.edit(id, dto);
+    public HttpEntity<?> editData(@PathVariable Long id, @RequestBody CourierEditDto dto, @AuthenticationPrincipal Human human) {
+        ApiResponse<HumanFrontDto> apiResponse = courierService.edit(id, dto, human);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 

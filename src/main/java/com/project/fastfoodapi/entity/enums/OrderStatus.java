@@ -9,7 +9,8 @@ public enum OrderStatus {
     NEW("Yangi"),
     ACCEPTED("Qabul qilingan"),
     SENT("Jo’natilgan"),
-    CLOSED("Yopilgan");
+    CLOSED("Yopilgan"),
+    CANCELED("Bekor qilingan");
 
     private final String title;
 }

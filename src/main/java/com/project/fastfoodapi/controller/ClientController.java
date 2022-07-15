@@ -26,7 +26,7 @@ public class ClientController {
     final HumanRepository humanRepository;
     final ClientService clientService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @GetMapping
     public HttpEntity<?> getAll(
             @RequestParam(required = false) boolean desc,
@@ -39,7 +39,7 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.getAll(page, size, q, sort, desc, status));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @GetMapping("/{id}")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
@@ -57,6 +57,7 @@ public class ClientController {
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@ModelAttribute HumanDto dto, @PathVariable Long id) {
         ApiResponse<?> apiResponse = clientService.edit(id, dto);
@@ -65,14 +66,14 @@ public class ClientController {
 
 //    TODO client delete kerakmi?
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
         ApiResponse<HumanFrontDto> apiResponse = clientService.block(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PostMapping("/{id}/unblock")
     public HttpEntity<?> unblock(@PathVariable Long id) {
         ApiResponse<HumanFrontDto> apiResponse = clientService.unblock(id);

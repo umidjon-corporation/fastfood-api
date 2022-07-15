@@ -26,7 +26,7 @@ public class EmployeeController {
     final EmployeeService employeeService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public HttpEntity<?> getOne(@PathVariable Long id) {
         Optional<Human> optionalHuman = humanRepository.findByStatusIsNotAndId(HumanStatus.DELETED, id);
         if (optionalHuman.isEmpty() || optionalHuman.get().getUserType() == UserType.CLIENT) {
@@ -41,7 +41,7 @@ public class EmployeeController {
                 .build());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/courier")
     public HttpEntity<?> getAllCourier() {
         return ResponseEntity.ok().body(
@@ -51,7 +51,7 @@ public class EmployeeController {
         );
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/operator")
     public HttpEntity<?> getAllOperator() {
         return ResponseEntity.ok().body(
@@ -61,7 +61,7 @@ public class EmployeeController {
         );
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin")
     public HttpEntity<?> getAllAdmin() {
         return ResponseEntity.ok().body(
@@ -71,35 +71,35 @@ public class EmployeeController {
         );
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
     public HttpEntity<?> add(@ModelAttribute EmployeeDto dto) {
         ApiResponse<?> apiResponse = employeeService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@ModelAttribute EmployeeDto dto, @PathVariable Long id) {
         ApiResponse<?> apiResponse = employeeService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<?> apiResponse = employeeService.delete(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{id}/block")
     public HttpEntity<?> block(@PathVariable Long id) {
         ApiResponse<HumanFrontDto> apiResponse = employeeService.block(id);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/{id}/unblock")
     public HttpEntity<?> unblock(@PathVariable Long id) {
         ApiResponse<HumanFrontDto> apiResponse = employeeService.unblock(id);

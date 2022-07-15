@@ -51,21 +51,21 @@ public class ProductController {
         return ResponseEntity.ok().body(productMapper.toFrontDto(optionalProduct.get()));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public HttpEntity<?> add(@ModelAttribute ProductDto dto) {
         ApiResponse<ProductFrontDto> apiResponse = productService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@ModelAttribute ProductDto dto, @PathVariable Long id) {
         ApiResponse<ProductFrontDto> apiResponse = productService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<Object> apiResponse = productService.delete(id);

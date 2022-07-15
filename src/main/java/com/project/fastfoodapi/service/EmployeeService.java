@@ -20,6 +20,7 @@ import java.util.Optional;
 public class EmployeeService {
     final HumanRepository humanRepository;
     final HumanMapper humanMapper;
+    final SettingService settingService;
 
     public ApiResponse<HumanFrontDto> add(EmployeeDto dto) {
         Human human = humanMapper.humanDtoToHuman(dto);
@@ -30,6 +31,7 @@ public class EmployeeService {
         if(!checkDto.isSuccess()){
             return checkDto;
         }
+        human.setSettings(settingService.initHumanSettings(dto.getType()));
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))

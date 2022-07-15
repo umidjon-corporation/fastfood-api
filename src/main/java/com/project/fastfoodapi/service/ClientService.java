@@ -23,6 +23,7 @@ import java.util.Optional;
 public class ClientService {
     final HumanRepository humanRepository;
     final HumanMapper humanMapper;
+    final SettingService settingService;
 
     public ApiResponse<HumanFrontDto> add(HumanDto dto) {
         Human human = humanMapper.humanDtoToHuman(dto);
@@ -31,9 +32,10 @@ public class ClientService {
             human.setStatus(HumanStatus.ACTIVE);
         }
         ApiResponse<HumanFrontDto> checkDto = checkDto(dto, "");
-        if (!checkDto.isSuccess()){
+        if (checkDto.isFailed()){
             return checkDto;
         }
+        human.setSettings(settingService.initHumanSettings(UserType.CLIENT));
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))

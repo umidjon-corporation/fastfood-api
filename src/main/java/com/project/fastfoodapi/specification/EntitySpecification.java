@@ -20,8 +20,8 @@ public class EntitySpecification<T> implements Specification<T> {
         return PageRequest.of(Objects.requireNonNullElse(page, 0), Objects.requireNonNullElse(size, 100));
     }
 
-    public static <T>Expression<T> getExpression(Root<?> root, String requestKey){
-        Expression<T> key;
+    public static <D>Expression<D> getExpression(Root<?> root, String requestKey){
+        Expression<D> key;
         String[] split = requestKey.split("\\.");
         assert split[0]!=null;
         Path<?> path = root.get(split[0]);

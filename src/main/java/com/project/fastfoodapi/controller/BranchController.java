@@ -40,7 +40,7 @@ public class BranchController {
         return ResponseEntity.ok().body(optionalBranch.get());
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public HttpEntity<?> add(@RequestBody BranchDto dto) {
         ApiResponse<?> apiResponse = branchService.add(dto);
@@ -48,14 +48,14 @@ public class BranchController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public HttpEntity<?> edit(@RequestBody BranchDto dto, @PathVariable Long id) {
         ApiResponse<?> apiResponse = branchService.edit(id, dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public HttpEntity<?> delete(@PathVariable Long id) {
         ApiResponse<?> apiResponse = branchService.delete(id);
