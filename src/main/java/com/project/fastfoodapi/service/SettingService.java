@@ -11,14 +11,12 @@ import com.project.fastfoodapi.entity.enums.SettingType;
 import com.project.fastfoodapi.entity.enums.UserType;
 import com.project.fastfoodapi.mapper.SettingMapper;
 import com.project.fastfoodapi.repository.*;
-import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
