@@ -32,8 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             ApiResponse<Map<String, Object>> tokenClaims = authService.checkJwt(req);
             if (tokenClaims.isSuccess()) {
-                UserDetails userDetails = authService.loadUserByUsername((String)
-                        tokenClaims.getData().get(TokenClaims.USER_NUMBER.getKey()));
+                UserDetails userDetails = authService.loadUserByUsername((String) tokenClaims.getData().get(TokenClaims.USER_NUMBER.getKey()));
                 if (userDetails == null) {
                     throw new AccessDeniedException("User not found");
                 }
@@ -50,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 res.getWriter().write(gson.toJson(tokenClaims));
             }
         } catch (AccessDeniedException | NestedServletException e) {
-            filterChain.doFilter(req, res);
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
             res.setStatus(500);

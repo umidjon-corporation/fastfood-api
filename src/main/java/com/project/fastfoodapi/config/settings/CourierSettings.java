@@ -21,4 +21,8 @@ public enum CourierSettings implements SettingProps{
     private final Set<String> defaultValue;
     private final SettingType type;
     private final String description;
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }

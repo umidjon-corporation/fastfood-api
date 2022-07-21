@@ -31,7 +31,7 @@ public class SettingController {
     }
 
     @PreAuthorize("permitAll()")
-    @GetMapping("/{userType}")
+    @GetMapping("/props/{userType}")
     public HttpEntity<?> getSettingsProps(@PathVariable UserType userType){
         return ResponseEntity.ok().body(settingService.getSettingsProps(userType));
     }
@@ -44,7 +44,7 @@ public class SettingController {
             @AuthenticationPrincipal Human human,
             @RequestParam(required = false) boolean reset
     ){
-        ApiResponse<SettingFrontDto> apiResponse=settingService.changeSetting(name, dto, human, reset);
+        ApiResponse<SettingFrontDto> apiResponse=settingService.editSetting(name, dto, human, reset);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 

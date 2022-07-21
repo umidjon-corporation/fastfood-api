@@ -13,7 +13,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Properties;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {AttachmentMapper.class})
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = {AttachmentMapper.class, SettingMapper.class})
 public interface HumanMapper {
     @Named("password")
     default String password(String password) {
@@ -31,9 +31,11 @@ public interface HumanMapper {
     Human humanDtoToHuman(EmployeeDto humanDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "settings", ignore = true)
     void updateHumanFromHumanDto(HumanDto humanDto, @MappingTarget Human human);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "settings", ignore = true)
     void updateHumanFromHumanDto(EmployeeDto humanDto, @MappingTarget Human human);
 
     @Mapping(source = "userType", target = "type")

@@ -10,4 +10,5 @@ public interface SettingProps {
     SettingType getType();
     String getDescription();
     boolean isRequired();
+    String getName();
 }

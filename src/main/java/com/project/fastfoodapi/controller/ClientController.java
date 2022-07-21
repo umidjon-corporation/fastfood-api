@@ -52,7 +52,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public HttpEntity<?> add(@ModelAttribute HumanDto dto) {
+    public HttpEntity<?> add(@ModelAttribute() HumanDto dto) {
         ApiResponse<?> apiResponse = clientService.add(dto);
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 400).body(apiResponse);
     }

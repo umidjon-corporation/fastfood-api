@@ -4,22 +4,22 @@ import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.Region;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
-@Getter
-public class HumanDto implements Serializable {
-    private final String name;
-    private final String number;
-    private final HumanStatus status;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private final LocalDate birthdate;
-    private final Region region;
-    private final Language lang;
-    private final MultipartFile photo;
+@Data
+public class HumanDto{
+    private String name;
+    private String number;
+    private HumanStatus status;
+    private MultipartFile photo;
+    private List<SettingsDto> settings;
 }

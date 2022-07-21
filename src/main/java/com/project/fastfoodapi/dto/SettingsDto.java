@@ -11,6 +11,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SettingsDto {
-    Set<String> value;
+    List<String> value;
     String name;
 }

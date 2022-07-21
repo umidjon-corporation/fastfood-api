@@ -1,8 +1,6 @@
 package com.project.fastfoodapi.config.settings;
 
-import com.project.fastfoodapi.entity.enums.Language;
 import com.project.fastfoodapi.entity.enums.SettingType;
-import com.project.fastfoodapi.repository.HumanRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -31,4 +29,9 @@ public enum AdminSettings implements SettingProps{
     private final Set<String> defaultValue;
     private final SettingType type;
     private final String description;
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }

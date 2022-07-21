@@ -4,6 +4,7 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.HumanDto;
 import com.project.fastfoodapi.dto.PageableResponse;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
+import com.project.fastfoodapi.dto.front.SettingFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -36,6 +37,12 @@ public class ClientService {
             return checkDto;
         }
         human.setSettings(settingService.initHumanSettings(UserType.CLIENT));
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        if(editSettings.isFailed()){
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message(editSettings.getMessage())
+                    .build();
+        }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))
@@ -57,6 +64,12 @@ public class ClientService {
         }
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        if(editSettings.isFailed()){
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message(editSettings.getMessage())
+                    .build();
+        }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))

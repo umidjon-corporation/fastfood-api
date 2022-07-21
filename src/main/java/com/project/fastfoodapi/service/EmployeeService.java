@@ -4,6 +4,7 @@ import com.project.fastfoodapi.dto.ApiResponse;
 import com.project.fastfoodapi.dto.EmployeeDto;
 import com.project.fastfoodapi.dto.front.HumanFrontDto;
 import com.project.fastfoodapi.dto.front.ProductFrontDto;
+import com.project.fastfoodapi.dto.front.SettingFrontDto;
 import com.project.fastfoodapi.entity.Human;
 import com.project.fastfoodapi.entity.enums.HumanStatus;
 import com.project.fastfoodapi.entity.enums.UserType;
@@ -12,6 +13,7 @@ import com.project.fastfoodapi.repository.HumanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,6 +34,12 @@ public class EmployeeService {
             return checkDto;
         }
         human.setSettings(settingService.initHumanSettings(dto.getType()));
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        if(editSettings.isFailed()){
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message(editSettings.getMessage())
+                    .build();
+        }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
                 .data(humanMapper.humanToHumanFrontDto(save))
@@ -55,6 +63,12 @@ public class EmployeeService {
         humanMapper.updateHumanFromHumanDto(dto, human);
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
+        }
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        if(editSettings.isFailed()){
+            return ApiResponse.<HumanFrontDto>builder()
+                    .message(editSettings.getMessage())
+                    .build();
         }
         Human save = humanRepository.save(human);
         return ApiResponse.<HumanFrontDto>builder()
