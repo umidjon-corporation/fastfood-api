@@ -37,7 +37,7 @@ public class ClientService {
             return checkDto;
         }
         human.setSettings(settingService.initHumanSettings(UserType.CLIENT));
-        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human, false);
         if(editSettings.isFailed()){
             return ApiResponse.<HumanFrontDto>builder()
                     .message(editSettings.getMessage())
@@ -64,7 +64,7 @@ public class ClientService {
         }
         Human human = optionalHuman.get();
         humanMapper.updateHumanFromHumanDto(dto, human);
-        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human, false);
         if(editSettings.isFailed()){
             return ApiResponse.<HumanFrontDto>builder()
                     .message(editSettings.getMessage())

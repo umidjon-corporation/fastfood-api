@@ -52,7 +52,7 @@ public class SettingService {
         return settingProps;
     }
 
-    public ApiResponse<SettingFrontDto> editSetting(@NonNull String name, @NonNull SettingDto dto, @NonNull Human human, boolean reset) {
+    public ApiResponse<SettingFrontDto> editSetting(@NonNull String name, @NonNull SettingDto dto, @NonNull Human human, boolean reset, boolean save) {
         Setting newSetting = null;
         for (int i = 0; i < human.getSettings().size(); i++) {
             Setting setting=human.getSettings().get(i);
@@ -65,7 +65,8 @@ public class SettingService {
                                 .build();
                     }
                     setting.setCurrentValue(props.getDefaultValue());
-                } else {
+                }
+                else {
                     ApiResponse<Set<String>> validate = props.getType().validate(props, new HashSet<>(dto.getValue()), name);
                     if(validate.isFailed()){
                         return ApiResponse.<SettingFrontDto>builder()
@@ -94,9 +95,12 @@ public class SettingService {
                             }
                         }
                     }
-                    setting.setCurrentValue(validate.getData());
+                    setting.setCurrentValue(validate.getData());    
                 }
                 human.getSettings().set(i, setting);
+                if(save){
+                    settingRepository.save(setting);
+                }
                 newSetting = setting;
                 break;
             }
@@ -108,7 +112,7 @@ public class SettingService {
                 .build();
     }
 
-    public ApiResponse<List<SettingFrontDto>> editSettings(@NonNull List<SettingsDto> dto, @NonNull Human human) {
+    public ApiResponse<List<SettingFrontDto>> editSettings(@NonNull List<SettingsDto> dto, @NonNull Human human, boolean save) {
         List<Setting> settings = human.getSettings();
         for (Setting setting : settings) {
             List<SettingsDto> settingsDtos = dto.stream().filter(settingsDto -> settingsDto.getName().equalsIgnoreCase(setting.getName())).toList();
@@ -116,7 +120,7 @@ public class SettingService {
                 continue;
             }
             SettingsDto settingsDto = settingsDtos.get(0);
-            ApiResponse<SettingFrontDto> changeSetting = editSetting(setting.getName(), new SettingDto(settingsDto.getValue()), human, false);
+            ApiResponse<SettingFrontDto> changeSetting = editSetting(setting.getName(), new SettingDto(settingsDto.getValue()), human, false, save);
             if(changeSetting.isFailed()){
                 return ApiResponse.<List<SettingFrontDto>>builder()
                         .message(changeSetting.getMessage())

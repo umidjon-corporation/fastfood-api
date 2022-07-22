@@ -34,19 +34,16 @@ public class DataLoader implements CommandLineRunner {
         if (initMode.equalsIgnoreCase("always") || humans.isEmpty()) {
             Human human = humanRepository.save(Human.builder()
                     .userType(UserType.SUPER_ADMIN)
-//                    .birthdate(LocalDate.parse("1991-01-23"))
-//                    .lang(Language.UZBEK)
                     .name("Tojiboyev Umidjon")
                     .number("+998990472436")
                     .settings(settingService.initHumanSettings(UserType.SUPER_ADMIN))
-//                    .region(Region.TASHKENT)
                     .password(passwordEncoder.encode("1234"))
                     .build());
             settingService.editSettings(List.of(
                     new SettingsDto(List.of(Language.UZBEK.name()), HumanSetting.LANGUAGE.name()),
                     new SettingsDto(List.of(), HumanSetting.REGION.name()),
                     new SettingsDto(List.of("1991-01-23"), HumanSetting.BIRTHDAY.name())
-            ), human);
+            ), human, true);
         }
     }
 }

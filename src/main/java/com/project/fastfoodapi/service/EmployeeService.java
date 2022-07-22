@@ -34,7 +34,7 @@ public class EmployeeService {
             return checkDto;
         }
         human.setSettings(settingService.initHumanSettings(dto.getType()));
-        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human, false);
         if(editSettings.isFailed()){
             return ApiResponse.<HumanFrontDto>builder()
                     .message(editSettings.getMessage())
@@ -64,7 +64,7 @@ public class EmployeeService {
         if (dto.getStatus() == null) {
             human.setStatus(HumanStatus.ACTIVE);
         }
-        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human);
+        ApiResponse<List<SettingFrontDto>> editSettings = settingService.editSettings(dto.getSettings(), human, false);
         if(editSettings.isFailed()){
             return ApiResponse.<HumanFrontDto>builder()
                     .message(editSettings.getMessage())

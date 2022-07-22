@@ -44,7 +44,7 @@ public class SettingController {
             @AuthenticationPrincipal Human human,
             @RequestParam(required = false) boolean reset
     ){
-        ApiResponse<SettingFrontDto> apiResponse=settingService.editSetting(name, dto, human, reset);
+        ApiResponse<SettingFrontDto> apiResponse=settingService.editSetting(name, dto, human, reset, true);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 
@@ -54,7 +54,7 @@ public class SettingController {
             @RequestBody List<SettingsDto> dto,
             @AuthenticationPrincipal Human human
     ){
-        ApiResponse<List<SettingFrontDto>> apiResponse=settingService.editSettings(dto, human);
+        ApiResponse<List<SettingFrontDto>> apiResponse=settingService.editSettings(dto, human, true);
         return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
     }
 }
