@@ -48,11 +48,15 @@ public class JwtFilter extends OncePerRequestFilter {
                 res.setContentType("application/json");
                 res.getWriter().write(gson.toJson(tokenClaims));
             }
-        } catch (AccessDeniedException | NestedServletException e) {
+        } catch (AccessDeniedException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
             res.setStatus(500);
+            res.setContentType("application/json");
+            res.getWriter().write(gson.toJson(ApiResponse.builder()
+                            .message("Something went wrong")
+                    .build()));
         }
 
     }

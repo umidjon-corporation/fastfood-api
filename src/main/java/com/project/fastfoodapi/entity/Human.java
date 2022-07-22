@@ -45,18 +45,6 @@ public class Human implements UserDetails {
     @Builder.Default
     private HumanStatus status = HumanStatus.ACTIVE;
 
-//    @Column(nullable = false)
-//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-//    private LocalDate birthdate;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private Region region;
-//
-//    @Column(nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    private Language lang;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserType userType;

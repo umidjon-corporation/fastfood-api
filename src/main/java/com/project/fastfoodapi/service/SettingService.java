@@ -81,7 +81,8 @@ public class SettingService {
                                     .message("Object \""+entityName+"\" with id=(" +valueBody+ ") not found")
                                     .build();
                         }
-                    }else if(props.getType()==SettingType.REFERENCE_TO_OBJECTS){
+                    }
+                    else if(props.getType()==SettingType.REFERENCE_TO_OBJECTS){
                         List<Long> ids = dto.getValue().stream().map(Long::parseLong).toList();
                         String entityName = props.getValues().stream().toList().get(0);
                         JpaRepository<?, Long> repository = getRepository(entityName);
@@ -95,8 +96,8 @@ public class SettingService {
                     }
                     setting.setCurrentValue(validate.getData());
                 }
+                human.getSettings().set(i, setting);
                 newSetting = setting;
-                settingRepository.save(setting);
                 break;
             }
         }
